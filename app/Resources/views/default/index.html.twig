@@ -2,14 +2,135 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        body {
+            /*background-color: #DEF0F2;*/
+        }
 
+        .js-menu-item-wrapper {
+            box-shadow: 0 -1px 5px 0;
+        }
+
+        .js-menu-item {
+            margin-bottom: 0 !important;
+        }
+
+        .blue {
+            background-color: #DEF0F2;
+        }
+
+        .green {
+            background-color: #CCDEC6;
+        }
+
+        .brown {
+            background-color: #9C9E90;
+        }
+
+        .red {
+            background-color: #E2B699;
+        }
+
+        .orange {
+            background-color: #FBE6C7;
+        }
+
+        .btn-download {
+            margin-bottom: .5rem;
+        }
+    </style>
 {% endblock %}
 
-{% block body %}
+{% import _self as macros %}
 
+{% macro transportDocumentsEmbedded() %}
+
+{% endmacro %}
+
+{% block body %}
+    <div class="js-menu">
+        <div class="js-menu-item-wrapper blue">
+            <h2 class="display-4 js-menu-item">documents</h2>
+            <div class="card-block" style="display:none;">
+                <p class="lead js-sub-menu-item">add new</p>
+                <div class="js-sub-item" style="display:none;">
+                    {{ form(forms.document) }}
+                </div>
+                <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
+                <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
+                <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
+            </div>
+        </div>
+        <div class="js-menu-item-wrapper green">
+            <h2 class="display-4 js-menu-item">transport</h2>
+            <div class="js-item card-block" style="display:none;">
+                <div class="card-block">
+                    <p class="lead js-sub-menu-item">add new</p>
+                    <div class="js-sub-item" style="display:none;">
+                        {{ form(forms.transport) }}
+                    </div>
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+            </div>
+        </div>
+        <div class="js-menu-item-wrapper brown">
+            <h2 class="display-4 js-menu-item">hotels</h2>
+            <div class="js-item card-block" style="display:none;">
+                <div class="card card-block">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+            </div>
+        </div>
+        <div class="js-menu-item-wrapper red">
+            <h2 class="display-4 js-menu-item">attractions</h2>
+            <div class="js-item card-block" style="display:none;">
+                <div class="card card-block">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+            </div>
+        </div>
+        <div class="js-menu-item-wrapper orange">
+            <h2 class="display-4 js-menu-item">itinerary</h2>
+            <div class="js-item card-block">
+                <div class="card card-block">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        var EuropeTravelsApp = {
+            initialize: function($wrapper) {
+                this.$wrapper = $wrapper;
 
+                this.$wrapper.find('.js-menu-item').on(
+                    'click',
+                    this.handleMenuItemClick
+                );
+
+                this.$wrapper.find('.js-sub-menu-item').on(
+                    'click',
+                    this.handleSubMenuItemClick
+                )
+            },
+
+            handleMenuItemClick: function () {
+                $(this).siblings('div').slideToggle();
+                $(this).parent().siblings().children().next().slideUp();
+            },
+
+            handleSubMenuItemClick: function () {
+                $(this).siblings('.js-sub-item').slideToggle();
+            }
+        };
+
+        $(document).ready(function() {
+            var $menu = $('.js-menu');
+            EuropeTravelsApp.initialize($menu);
+        });
+    </script>
 {% endblock %}

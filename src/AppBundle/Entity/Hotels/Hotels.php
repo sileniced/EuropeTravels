@@ -12,7 +12,7 @@ namespace AppBundle\Entity\Hotels;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\HotelRepository")
  * @ORM\Table(name="hotels")
  */
 class Hotels
@@ -30,6 +30,11 @@ class Hotels
     private $name;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $link;
+
+    /**
      * @ORM\Column(type="string", nullable=true)
      */
     private $reservationNumber;
@@ -42,12 +47,12 @@ class Hotels
     /**
      * @ORM\Column(type="datetime")
      */
-    private $arriveAt;
+    private $startsAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $departAt;
+    private $endsAt;
 
     /**
      * @ORM\Column(type="float")
@@ -55,14 +60,9 @@ class Hotels
     private $costs;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string")
      */
-    private $isReservedWithCreditCard;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isCharged;
+    private $paymentStatus;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Hotels\HotelTransport", mappedBy="hotel")
@@ -109,6 +109,22 @@ class Hotels
     /**
      * @return mixed
      */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param mixed $link
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getReservationNumber()
     {
         return $this->reservationNumber;
@@ -141,33 +157,33 @@ class Hotels
     /**
      * @return mixed
      */
-    public function getArriveAt()
+    public function getStartsAt()
     {
-        return $this->arriveAt;
+        return $this->startsAt;
     }
 
     /**
-     * @param mixed $arriveAt
+     * @param mixed $startsAt
      */
-    public function setArriveAt($arriveAt)
+    public function setStartsAt($startsAt)
     {
-        $this->arriveAt = $arriveAt;
+        $this->startsAt = $startsAt;
     }
 
     /**
      * @return mixed
      */
-    public function getDepartAt()
+    public function getEndsAt()
     {
-        return $this->departAt;
+        return $this->endsAt;
     }
 
     /**
-     * @param mixed $departAt
+     * @param mixed $endsAt
      */
-    public function setDepartAt($departAt)
+    public function setEndsAt($endsAt)
     {
-        $this->departAt = $departAt;
+        $this->endsAt = $endsAt;
     }
 
     /**
@@ -189,33 +205,17 @@ class Hotels
     /**
      * @return mixed
      */
-    public function getisReservedWithCreditCard()
+    public function getPaymentStatus()
     {
-        return $this->isReservedWithCreditCard;
+        return $this->paymentStatus;
     }
 
     /**
-     * @param mixed $isReservedWithCreditCard
+     * @param mixed $paymentStatus
      */
-    public function setIsReservedWithCreditCard($isReservedWithCreditCard)
+    public function setPaymentStatus($paymentStatus)
     {
-        $this->isReservedWithCreditCard = $isReservedWithCreditCard;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getisCharged()
-    {
-        return $this->isCharged;
-    }
-
-    /**
-     * @param mixed $isCharged
-     */
-    public function setIsCharged($isCharged)
-    {
-        $this->isCharged = $isCharged;
+        $this->paymentStatus = $paymentStatus;
     }
 
     /**

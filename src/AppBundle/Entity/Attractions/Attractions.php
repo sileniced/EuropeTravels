@@ -12,7 +12,7 @@ namespace AppBundle\Entity\Attractions;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AttractionRepository")
  * @ORM\Table(name="attractions")
  */
 class Attractions
@@ -40,9 +40,19 @@ class Attractions
     private $description;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $link;
+
+    /**
      * @ORM\Column(type="float")
      */
     private $costs;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $paymentStatus;
 
     /**
      * @ORM\Column(type="datetime")
@@ -50,12 +60,17 @@ class Attractions
     private $startsAt;
 
     /**
+     * @ORM\Column(type="datetime")
+     */
+    private $endsAt;
+
+    /**
      * @ORM\Column(type="string")
      */
     private $address;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Attractions\AttractionTransport", mappedBy="attraction")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Attractions\AttractionTransport", mappedBy="attraction")
      */
     private $transport;
 
@@ -131,6 +146,22 @@ class Attractions
     /**
      * @return mixed
      */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param mixed $link
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCosts()
     {
         return $this->costs;
@@ -147,6 +178,22 @@ class Attractions
     /**
      * @return mixed
      */
+    public function getPaymentStatus()
+    {
+        return $this->paymentStatus;
+    }
+
+    /**
+     * @param mixed $paymentStatus
+     */
+    public function setPaymentStatus($paymentStatus)
+    {
+        $this->paymentStatus = $paymentStatus;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getStartsAt()
     {
         return $this->startsAt;
@@ -158,6 +205,22 @@ class Attractions
     public function setStartsAt($startsAt)
     {
         $this->startsAt = $startsAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEndsAt()
+    {
+        return $this->endsAt;
+    }
+
+    /**
+     * @param mixed $endsAt
+     */
+    public function setEndsAt($endsAt)
+    {
+        $this->endsAt = $endsAt;
     }
 
     /**

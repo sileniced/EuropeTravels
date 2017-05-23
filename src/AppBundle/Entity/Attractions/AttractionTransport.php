@@ -13,14 +13,14 @@ use AppBundle\Entity\Transport\Transport;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TransportRepository")
  * @ORM\Table(name="attraction_transport")
  */
 class AttractionTransport extends Transport
 {
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Attractions\Attractions", inversedBy="documents")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Attractions\Attractions", inversedBy="transport")
      */
     private $attraction;
 

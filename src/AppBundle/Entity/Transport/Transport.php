@@ -12,7 +12,7 @@ namespace AppBundle\Entity\Transport;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TransportRepository")
  * @ORM\Table(name="transport")
  */
 class Transport
@@ -23,6 +23,11 @@ class Transport
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $link;
 
     /**
      * @ORM\Column(type="string")
@@ -57,17 +62,22 @@ class Transport
     /**
      * @ORM\Column(type="datetime")
      */
-    private $departAt;
+    private $startsAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $arriveAt;
+    private $endsAt;
 
     /**
      * @ORM\Column(type="float")
      */
     private $costs;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $paymentStatus;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Transport\TransportDocuments", mappedBy="transport")
@@ -88,6 +98,22 @@ class Transport
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param mixed $link
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
     }
 
     /**
@@ -189,33 +215,33 @@ class Transport
     /**
      * @return mixed
      */
-    public function getDepartAt()
+    public function getStartsAt()
     {
-        return $this->departAt;
+        return $this->startsAt;
     }
 
     /**
-     * @param mixed $departAt
+     * @param mixed $startsAt
      */
-    public function setDepartAt($departAt)
+    public function setStartsAt($startsAt)
     {
-        $this->departAt = $departAt;
+        $this->startsAt = $startsAt;
     }
 
     /**
      * @return mixed
      */
-    public function getArriveAt()
+    public function getEndsAt()
     {
-        return $this->arriveAt;
+        return $this->endsAt;
     }
 
     /**
-     * @param mixed $arriveAt
+     * @param mixed $endsAt
      */
-    public function setArriveAt($arriveAt)
+    public function setEndsAt($endsAt)
     {
-        $this->arriveAt = $arriveAt;
+        $this->endsAt = $endsAt;
     }
 
     /**
@@ -232,6 +258,22 @@ class Transport
     public function setCosts($costs)
     {
         $this->costs = $costs;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentStatus()
+    {
+        return $this->paymentStatus;
+    }
+
+    /**
+     * @param mixed $paymentStatus
+     */
+    public function setPaymentStatus($paymentStatus)
+    {
+        $this->paymentStatus = $paymentStatus;
     }
 
     /**
