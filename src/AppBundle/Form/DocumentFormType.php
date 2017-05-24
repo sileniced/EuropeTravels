@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Documents;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,6 +16,15 @@ class DocumentFormType extends AbstractType
     {
         $builder
             ->add('description')
+            ->add('category', ChoiceType::class, [
+                'choices' => [
+                    'general' => 'general',
+                    'transport' => 'transport',
+                    'hotel' => 'hotel',
+                    'attraction' => 'attraction',
+                    'other' => 'other'
+                ]
+            ])
             ->add('document', FileType::class)
             ->add('submit', SubmitType::class)
         ;

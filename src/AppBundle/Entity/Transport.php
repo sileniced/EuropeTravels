@@ -6,7 +6,7 @@
  * Time: 22:13
  */
 
-namespace AppBundle\Entity\Transport;
+namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -23,6 +23,11 @@ class Transport
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $category;
 
     /**
      * @ORM\Column(type="string")
@@ -80,11 +85,6 @@ class Transport
     private $paymentStatus;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Transport\TransportDocuments", mappedBy="transport")
-     */
-    private $documents;
-
-    /**
      * @return mixed
      */
     public function getId()
@@ -98,6 +98,22 @@ class Transport
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param mixed $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
     }
 
     /**
@@ -275,22 +291,5 @@ class Transport
     {
         $this->paymentStatus = $paymentStatus;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
-    }
-
-    /**
-     * @param mixed $documents
-     */
-    public function setDocuments($documents)
-    {
-        $this->documents = $documents;
-    }
-
 
 }

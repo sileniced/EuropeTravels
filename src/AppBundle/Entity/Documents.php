@@ -27,6 +27,11 @@ class Documents
     /**
      * @ORM\Column(type="string")
      */
+    private $category;
+
+    /**
+     * @ORM\Column(type="string")
+     */
     private $description;
 
     private $document;
@@ -50,6 +55,22 @@ class Documents
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param mixed $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
     }
 
     /**

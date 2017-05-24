@@ -2,10 +2,9 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Transport\Transport;
+use AppBundle\Entity\Transport;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +22,14 @@ class TransportFormType extends AbstractType
                     'boat' => 'boat',
                     'taxi' => 'taxi'
 
+                ]
+            ])
+            ->add('category', ChoiceType::class, [
+                'choices' => [
+                    'to other transport' => 'to other transport',
+                    'to hotel' => 'to hotel',
+                    'to attraction' => 'to attraction',
+                    'other' => 'other'
                 ]
             ])
             ->add('transporter')
@@ -45,12 +52,6 @@ class TransportFormType extends AbstractType
             ])
             ->add('costs')
             ->add('paymentStatus')
-            ->add('documents', CollectionType::class, [
-                'entry_type' => TransportDocumentEmbeddedType::class,
-                'allow_delete' => true,
-                'allow_add' => true,
-                'by_reference' => false,
-            ])
             ->add('submit', SubmitType::class);
     }
 

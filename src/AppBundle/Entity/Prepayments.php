@@ -6,7 +6,7 @@
  * Time: 22:13
  */
 
-namespace AppBundle\Entity\Prepayments;
+namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -33,11 +33,6 @@ class Prepayments
      * @ORM\Column(type="float")
      */
     private $costs;
-
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Prepayments\PrepaymentsDocuments", mappedBy="prepayment")
-     */
-    private $documents;
 
     /**
      * @return mixed
@@ -86,22 +81,5 @@ class Prepayments
     {
         $this->costs = $costs;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
-    }
-
-    /**
-     * @param mixed $documents
-     */
-    public function setDocuments($documents)
-    {
-        $this->documents = $documents;
-    }
-
 
 }

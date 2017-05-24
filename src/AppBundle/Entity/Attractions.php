@@ -6,7 +6,7 @@
  * Time: 22:13
  */
 
-namespace AppBundle\Entity\Attractions;
+namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -68,16 +68,6 @@ class Attractions
      * @ORM\Column(type="string")
      */
     private $address;
-
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Attractions\AttractionTransport", mappedBy="attraction")
-     */
-    private $transport;
-
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Attractions\AttractionDocuments", mappedBy="attraction")
-     */
-    private $documents;
 
     /**
      * @return mixed
@@ -237,38 +227,6 @@ class Attractions
     public function setAddress($address)
     {
         $this->address = $address;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTransport()
-    {
-        return $this->transport;
-    }
-
-    /**
-     * @param mixed $transport
-     */
-    public function setTransport($transport)
-    {
-        $this->transport = $transport;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
-    }
-
-    /**
-     * @param mixed $documents
-     */
-    public function setDocuments($documents)
-    {
-        $this->documents = $documents;
     }
 
 }

@@ -6,7 +6,7 @@
  * Time: 22:12
  */
 
-namespace AppBundle\Entity\Hotels;
+namespace AppBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -63,16 +63,6 @@ class Hotels
      * @ORM\Column(type="string")
      */
     private $paymentStatus;
-
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Hotels\HotelTransport", mappedBy="hotel")
-     */
-    private $transport;
-
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Hotels\HotelDocuments", mappedBy="hotel")
-     */
-    private $documents;
 
     /**
      * @return mixed
@@ -217,38 +207,5 @@ class Hotels
     {
         $this->paymentStatus = $paymentStatus;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getTransport()
-    {
-        return $this->transport;
-    }
-
-    /**
-     * @param mixed $transport
-     */
-    public function setTransport($transport)
-    {
-        $this->transport = $transport;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
-    }
-
-    /**
-     * @param mixed $documents
-     */
-    public function setDocuments($documents)
-    {
-        $this->documents = $documents;
-    }
-
 
 }
