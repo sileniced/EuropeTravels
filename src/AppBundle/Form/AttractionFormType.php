@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Transport;
+use AppBundle\Entity\Attractions;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -11,36 +11,29 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TransportFormType extends AbstractType
+class AttractionFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('category', ChoiceType::class, [
+            ->add('city', ChoiceType::class, [
                 'choices' => [
-                    'to other transport' => 'to other transport',
-                    'to hotel' => 'to hotel',
-                    'to attraction' => 'to attraction',
+                    'Düsseldorf' => 'Düsseldorf',
+                    'Venice' => 'Venice',
+                    'London' => 'London',
+                    'Santorini' => 'Santorini',
+                    'Paris' => 'Paris',
                     'other' => 'other'
                 ]
             ])
             ->add('description')
-            ->add('meansOfTransport', ChoiceType::class, [
-                'choices' => [
-                    'plane' => 'plane',
-                    'train' => 'train',
-                    'boat' => 'boat',
-                    'taxi' => 'taxi'
-
-                ]
-            ])
+            ->add('link')
+            ->add('address')
             ->add('startsAt', DateTimeType::class, [
                 'widget' => 'single_text',
-                'label' => 'departs at'
             ])
             ->add('endsAt', DateTimeType::class, [
                 'widget' => 'single_text',
-                'label' => 'arrival at'
             ])
             ->add('costs')
             ->add('paymentStatus')
@@ -53,7 +46,7 @@ class TransportFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Transport::class
+            'data_class' => Attractions::class
         ]);
     }
 }

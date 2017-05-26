@@ -23,7 +23,10 @@ class DefaultController extends Controller
             'documents' =>   $em->getRepository('AppBundle:Documents')->findAll(),
             'forms' => [
                 'document' =>  $this->createForm('AppBundle\Form\DocumentFormType')->createView(),
-                'transport' => $this->createForm('AppBundle\Form\TransportFormType')->createView()
+                'transport' => $this->createForm('AppBundle\Form\TransportFormType')->createView(),
+                'hotel' =>     $this->createForm('AppBundle\Form\HotelFormType')->createView(),
+                'attraction'=> $this->createForm('AppBundle\Form\AttractionFormType')->createView(),
+                'prepayment'=> $this->createForm('AppBundle\Form\PrepaymentFormType')->createView()
             ]
         ]);
     }
