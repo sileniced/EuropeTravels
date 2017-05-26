@@ -33,7 +33,10 @@ class DocumentFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Documents::class
+            'data_class' => Documents::class,
+            'attr' => [
+                'data-url' => 'api/document'
+            ]
         ]);
     }
 }

@@ -7,3 +7,11 @@ services:
     #service_name:
     #    class: AppBundle\Directory\ClassName
     #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']
+    app.form.type.local_datetime:
+        class: AppBundle\FormType\LocalDateTimeType
+        tags:
+            - { name: form.type, alias: local_datetime }
+
+    app.hash_generator:
+        class: AppBundle\Service\hashGenerator
+        arguments: ['@doctrine.orm.entity_manager']

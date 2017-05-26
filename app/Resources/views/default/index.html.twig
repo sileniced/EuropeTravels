@@ -15,6 +15,10 @@
             margin-bottom: 0 !important;
         }
 
+        .js-item-card-title {
+            text-align: center;
+        }
+
         .blue {
             background-color: #DEF0F2;
         }
@@ -43,7 +47,54 @@
 
 {% import _self as macros %}
 
-{% macro transportDocumentsEmbedded() %}
+{% macro addNewTransport(transport) %}
+<div class="js-item-card-title">
+    <h4>{{ transport.description }}</h4>
+    <h5>{{ transport.category }}</h5>
+</div>
+<div class="card card-block js-item-card" style="display:none;" data-id="{{ transport.id }}">
+    <h6 style="text-align: center;">{{ transport.meansOfTransport | capitalize }}</h6>
+    From: {{ transport.startsAt | date('D j-n  G:i') }}<br>
+    To: {{ transport.endsAt | date('D j-n  G:i') }}<br><br>
+    {{ transport.costs }} ({{ transport.paymentStatus }})<br><br>
+    {% if transport.documentPath1 %}
+        <button class="col-sm-12 btn btn-secondary js-btn-download"
+                data-hash="{{ transport.documentPath1 }}"
+                type="button">
+            {{ transport.documentDescription1 }}
+        </button>
+    {% endif %}
+    {% if transport.documentPath2 %}
+        <button class="col-sm-12 btn btn-secondary js-btn-download"
+                data-hash="{{ transport.documentPath2 }}"
+                type="button">
+            {{ transport.documentDescription2 }}
+        </button>
+    {% endif %}
+    {% if transport.documentPath3 %}
+        <button class="col-sm-12 btn btn-secondary js-btn-download"
+                data-hash="{{ transport.documentPath3 }}"
+                type="button">
+            {{ transport.documentDescription3 }}
+        </button>
+    {% endif %}
+</div>
+<hr>
+{% endmacro %}
+
+{% macro addNewHotel() %}
+
+{% endmacro %}
+
+{% macro addNewAttraction() %}
+
+{% endmacro %}
+
+{% macro addNewPrepayment() %}
+
+{% endmacro %}
+
+{% macro addNewDocument() %}
 
 {% endmacro %}
 
@@ -53,11 +104,11 @@
             <h2 class="display-4 js-menu-item">documents</h2>
             <div class="card-block" style="display:none;">
                 <p class="lead js-form-menu-item">add new document</p>
-                <div class="js-form-item" style="display:none;">
+                <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
                     {{ form(forms.document) }}
                 </div>
                 <p class="lead js-form-menu-item">add new prepayment</p>
-                <div class="js-form-item" style="display:none;">
+                <div data-url="{{ path('prepayment') }}" class="js-form-item" style="display:none;">
                     {{ form(forms.prepayment) }}
                 </div>
                 <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
@@ -67,13 +118,17 @@
         </div>
         <div class="js-menu-item-wrapper green">
             <h2 class="display-4 js-menu-item">transport</h2>
-            <div class="js-item card-block" style="display:none;">
-                <div class="card-block">
-                    <p class="lead js-form-menu-item">add new</p>
-                    <div class="js-form-item" style="display:none;">
-                        {{ form(forms.transport) }}
+            <div style="display:none;">
+                <p class="col-1 lead js-form-menu-item">add</p>
+                <div class="js-item card-block">
+                    <div class="card-block" data-entity="Transport">
+                        <div data-url="{{ path('transport') }}" class="js-form-item" style="display:none;">
+                            {{ form(forms.transport) }}
+                        </div>
+                        {% for transport in transports %}
+                            {{ macros.addNewTransport(transport) }}
+                        {% endfor %}
                     </div>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
                 </div>
             </div>
         </div>
@@ -82,7 +137,7 @@
             <div class="js-item card-block" style="display:none;">
                 <div class="card-block">
                     <p class="lead js-form-menu-item">add new</p>
-                    <div class="js-form-item" style="display:none;">
+                    <div data-url="{{ path('hotel') }}" class="js-form-item" style="display:none;">
                         {{ form(forms.hotel) }}
                     </div>
                     Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
@@ -94,7 +149,7 @@
             <div class="js-item card-block" style="display:none;">
                 <div class="card-block">
                     <p class="lead js-form-menu-item">add new</p>
-                    <div class="js-form-item" style="display:none;">
+                    <div data-url="{{ path('attraction') }}" class="js-form-item" style="display:none;">
                         {{ form(forms.attraction) }}
                     </div>
                     Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
@@ -105,6 +160,7 @@
             <h2 class="display-4 js-menu-item">itinerary</h2>
             <div class="js-item card-block">
                 <div class="card-block">
+                    <p id="refresh-itinerary" class="lead" style="display:none;">refresh page for updated itinerary</p>
                     Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
                 </div>
             </div>
@@ -116,7 +172,7 @@
     {{ parent() }}
     <script>
         var EuropeTravelsApp = {
-            initialize: function($wrapper) {
+            initialize: function ($wrapper) {
                 this.$wrapper = $wrapper;
 
                 this.$wrapper.find('.js-menu-item').on(
@@ -126,17 +182,113 @@
 
                 this.$wrapper.find('.js-form-menu-item').on(
                     'click',
-                    this.handleformMenuItemClick
+                    this.handleFormMenuItemClick
+                );
+
+                this.$wrapper.find('form').on(
+                    'submit',
+                    this.handleFormSubmit
+                );
+
+                this.$wrapper.find('.js-item-card-title').on(
+                    'click',
+                    this.handleCardTitleClick
+                );
+
+                this.$wrapper.find('.js-btn-download').on(
+                    'click',
+                    this.handleButtonDownload
                 )
             },
 
             handleMenuItemClick: function () {
-                $(this).siblings('div').slideToggle();
+                $(this).next('div').slideToggle();
                 $(this).parent().siblings().children().next().slideUp();
             },
 
-            handleformMenuItemClick: function () {
-                $(this).next('.js-form-item').slideToggle();
+            handleFormMenuItemClick: function () {
+                $(this).next().find('.js-form-item').slideToggle();
+            },
+
+            handleFormSubmit: function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: $(this).closest('div').data('url'),
+                    data: new FormData($(this)[0]),
+                    method: 'POST',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function (response) {
+
+                        var data = {
+                            'form': $(this).serializeArray(),
+                            'data': response
+                        };
+
+                        addNewApp.handleFormSuccess(data)
+                    }
+                })
+            },
+
+            handleCardTitleClick: function() {
+                $(this).next().slideToggle();
+            },
+
+            handleButtonDownload: function () {
+                var $parent = $(this).closest('div');
+                $.ajax({
+                    url: '/check/' + $(this).data('description') + '/' + $parent.closest('div').data('entity') + '/' + $parent.data('id') + '/hash/' + $(this).data('hash'),
+                    method: 'GET',
+                    success: function (document) {
+
+                    }
+                })
+            }
+
+        };
+
+        var addNewApp = {
+
+            handleFormSuccess: function(data) {
+                switch (data.data.form) {
+                    case 'transport':
+                        this.transport(data);
+                        break;
+                    case 'hotel':
+                        this.hotel(data);
+                        break;
+                    case 'attraction':
+                        this.attraction(data);
+                        break;
+                    case 'prepayment':
+                        this.prepayment(data);
+                        break;
+                    case 'document':
+                        this.document(data);
+                        break;
+                }
+            },
+
+            transport: function (data) {
+                console.log(data);
+            },
+
+            hotel: function (data) {
+
+            },
+
+            attraction: function (data) {
+
+            },
+
+            prepayment: function (data) {
+
+            },
+
+            document: function (data) {
+
             }
         };
 

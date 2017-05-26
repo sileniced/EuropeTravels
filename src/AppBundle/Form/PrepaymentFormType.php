@@ -17,16 +17,22 @@ class PrepaymentFormType extends AbstractType
             ->add('description')
             ->add('costs')
             ->add('paymentStatus')
-            ->add('document1', FileType::class)
-            ->add('document2', FileType::class)
-            ->add('document3', FileType::class)
+            ->add('documentDescription1')
+            ->add('document1', FileType::class, ['required' => false])
+            ->add('documentDescription2')
+            ->add('document2', FileType::class, ['required' => false])
+            ->add('documentDescription3')
+            ->add('document3', FileType::class, ['required' => false])
             ->add('submit', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Prepayments::class
+            'data_class' => Prepayments::class,
+            'attr' => [
+                'data-url' => 'api/prepayment'
+            ]
         ]);
     }
 }
