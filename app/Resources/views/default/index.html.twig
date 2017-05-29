@@ -3,10 +3,6 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        body {
-            /*background-color: #DEF0F2;*/
-        }
-
         .js-menu-item-wrapper {
             box-shadow: 0 -1px 5px 0;
         }
@@ -16,6 +12,10 @@
         }
 
         .js-item-card-title {
+            text-align: center;
+        }
+
+        .js-item-title {
             text-align: center;
         }
 
@@ -38,263 +38,492 @@
         .orange {
             background-color: #FBE6C7;
         }
-
-        .btn-download {
-            margin-bottom: .5rem;
-        }
     </style>
 {% endblock %}
 
 {% import _self as macros %}
 
-{% macro addNewTransport(transport) %}
-<div class="js-item-card-title">
-    <h4>{{ transport.description }}</h4>
-    <h5>{{ transport.category }}</h5>
-</div>
-<div class="card card-block js-item-card" style="display:none;" data-id="{{ transport.id }}">
-    <h6 style="text-align: center;">{{ transport.meansOfTransport | capitalize }}</h6>
-    From: {{ transport.startsAt | date('D j-n  G:i') }}<br>
-    To: {{ transport.endsAt | date('D j-n  G:i') }}<br><br>
-    {{ transport.costs }} ({{ transport.paymentStatus }})<br><br>
-    {% if transport.documentPath1 %}
-        <button class="col-sm-12 btn btn-secondary js-btn-download"
-                data-hash="{{ transport.documentPath1 }}"
-                type="button">
-            {{ transport.documentDescription1 }}
-        </button>
+{% macro transport(transport) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ transport.description }}</h4>
+        <h5>{{ transport.category }}</h5>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;">{{ transport.meansOfTransport | capitalize }}</h6>
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ transport.address }}">{{ transport.address }}</a></h6>
+        {{ macros.itineraryPiece(transport.itinerary) }}
+        {{ macros.paymentStatus(transport, 'Transport') }}<br>
+        {{ macros.objectDocuments(transport, 'Transport') }}
+    </div>
+    <hr>
+{% endmacro %}
+
+{% macro hotel(hotel) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ hotel.city }}</h4>
+        <h5>{{ hotel.name }}</h5>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ hotel.address }}">{{ hotel.address }}</a></h6>
+        {{ macros.itineraryPiece(hotel.itinerary) }}
+        <a target="_blank" href="{{ hotel.link }}">website</a><br>
+        {{ macros.paymentStatus(hotel, 'Hotel') }}<br>
+        {{ macros.objectDocuments(hotel, 'Hotel') }}
+    </div>
+    <hr>
+{% endmacro %}
+
+{% macro attraction(attraction) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ attraction.city }}</h4>
+        <h5>{{ attraction.description }}</h5>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ attraction.address }}">{{ attraction.address }}</a></h6>
+        {{ macros.itineraryPiece(attraction.itinerary) }}
+        <a target="_blank" href="{{ attraction.link }}">website</a><br>
+        {{ macros.paymentStatus(attraction, 'Attraction') }}<br>
+        {{ macros.objectDocuments(attraction, 'Attraction') }}
+    </div>
+    <hr>
+{% endmacro %}
+
+{% macro itinerary(object) %}{% import _self as macros %}
+    <div class="js-item-title">
+        <h3 class="display-4">{{ object.entity }}</h3>
+        <h4>{{ object.startsAt | date('D j-n  G:i') }}</h4>
+        <h5>{{ object.endsAt | date('D j-n  G:i') }}</h5>
+    </div>
+    {% if object.entity == 'Transport' %}
+        {{ macros.transport(object.transport) }}
+    {% elseif object.entity == 'Hotel' %}
+        {{ macros.hotel(object.hotel) }}
+    {% elseif object.entity == 'Attraction' %}
+        {{ macros.attraction(object.attraction) }}
     {% endif %}
-    {% if transport.documentPath2 %}
-        <button class="col-sm-12 btn btn-secondary js-btn-download"
-                data-hash="{{ transport.documentPath2 }}"
-                type="button">
-            {{ transport.documentDescription2 }}
-        </button>
+{% endmacro %}
+
+{% macro paymentStatusList(payment) %}{% import _self as macros %}
+    <tr class="js-row-title">
+        <td width="75%">
+            {% if payment.entity == 'Transport' %}
+                {{ payment.transport.description }}
+            {% elseif payment.entity == 'Hotel' %}
+                {{ payment.hotel.name }}
+            {% elseif payment.entity == 'Attraction' %}
+                {{ payment.attraction.description }}
+            {% elseif payment.entity == 'Payment' %}
+                {{ payment.payment.description }}
+            {% endif %}
+        </td>
+        <td width="25%">€{{ payment.costs }}</td>
+    </tr>
+    <tr style="display: none;">
+        <td colspan="2">
+            <h3 class="display-4" style="text-align: center;">{{ payment.entity }}</h3>
+            {% if payment.entity == 'Transport' %}
+                {{ macros.transport(payment.transport) }}
+            {% elseif payment.entity == 'Hotel' %}
+                {{ macros.hotel(payment.hotel) }}
+            {% elseif payment.entity == 'Attraction' %}
+                {{ macros.attraction(payment.attraction) }}
+            {% elseif payment.entity == 'Payment' %}
+                {{ macros.payment(payment.payment) }}
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{% macro document() %}
+
+{% endmacro %}
+
+{% macro payment() %}
+
+{% endmacro %}
+
+{% macro itineraryPiece(itinerary) %}
+    From: {{ itinerary.startsAt | date('D j-n  G:i') }}<br>
+    To: {{ itinerary.endsAt | date('D j-n  G:i') }}<br><br>
+{% endmacro %}
+
+{% macro paymentStatus(object, entity) %}
+    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+        <button type="button" class="btn btn-secondary js-costs" data-currency="EUR" data-idr>€ {{ object.paymentStatus.costs }}</button>
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ object.paymentStatus.paymentStatus }}
+            </button>
+            <div class="dropdown-menu js-payment-status" data-entity="{{ entity }}" data-id="{{ object.id }}" aria-labelledby="btnGroupDrop1">
+                <a class="dropdown-item js-payment-status-item" href="#">Booked CC 4086</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Booked CC 7501</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Charged CC 4086</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Charged CC 7501</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Completed</a>
+                <a class="dropdown-item js-payment-status-item" href="#">To be paid cash</a>
+                <a class="dropdown-item js-payment-status-item" href="#">To be paid CC</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro objectDocuments(object, entity) %}
+
+    {% if object.documentPath1 %}
+        <a target="_blank"
+           class="col-sm-12 btn btn-secondary"
+           role="button"
+           href="{{ documentLink(object.documentDescription1, entity, object.id, object.documentPath1) }}">
+            {{ object.documentDescription1 }}
+        </a>
     {% endif %}
-    {% if transport.documentPath3 %}
-        <button class="col-sm-12 btn btn-secondary js-btn-download"
-                data-hash="{{ transport.documentPath3 }}"
-                type="button">
-            {{ transport.documentDescription3 }}
-        </button>
+    {% if object.documentPath2 %}
+        <a target="_blank"
+           class="col-sm-12 btn btn-secondary"
+           role="button"
+           href="{{ documentLink(object.documentDescription2, entity, object.id, object.documentPath2) }}">
+            {{ object.documentDescription2 }}
+        </a>
     {% endif %}
-</div>
-<hr>
-{% endmacro %}
-
-{% macro addNewHotel() %}
-
-{% endmacro %}
-
-{% macro addNewAttraction() %}
-
-{% endmacro %}
-
-{% macro addNewPrepayment() %}
-
-{% endmacro %}
-
-{% macro addNewDocument() %}
+    {% if object.documentPath3 %}
+        <a target="_blank"
+           class="col-sm-12 btn btn-secondary"
+           role="button"
+           href="{{ documentLink(object.documentDescription3, entity, object.id, object.documentPath3) }}">
+            {{ object.documentDescription3 }}
+        </a>
+    {% endif %}
 
 {% endmacro %}
 
 {% block body %}
     <div class="js-menu">
+
+
         <div class="js-menu-item-wrapper blue">
-            <h2 class="display-4 js-menu-item">documents</h2>
-            <div class="card-block" style="display:none;">
-                <p class="lead js-form-menu-item">add new document</p>
-                <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
-                    {{ form(forms.document) }}
+            <h2 class="display-4 js-menu-item">docs.payments</h2>
+            <div style="display:none;">
+
+
+                <div class="js-menu-item-wrapper">
+                    <h2 class="display-4 js-menu-item">documents</h2>
+                    <div style="display:none;">
+                        <p class="col-1 lead js-form-menu-item">add</p>
+                        <div class="js-item card-block">
+                            <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
+                                {{ form(forms.document) }}
+                            </div>
+                            {% for document in documents %}
+                                {{ macros.document(document) }}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                <p class="lead js-form-menu-item">add new prepayment</p>
-                <div data-url="{{ path('prepayment') }}" class="js-form-item" style="display:none;">
-                    {{ form(forms.prepayment) }}
+
+
+                <div class="js-menu-item-wrapper">
+                    <h2 class="display-4 js-menu-item">payments</h2>
+                    <div>
+                        <p class="col-1 lead js-form-menu-item">add</p>
+                        <div class="js-item card-block">
+                            <div data-url="{{ path('payment') }}" class="js-form-item" style="display:none;">
+                                {{ form(forms.payment) }}
+                            </div>
+
+
+                            {% set total = 0 %}
+                            {% set paymentStatusTitle = '' %}
+
+                            {% for payment in paymentStatus %}
+
+                            {% if loop.first %}
+                            {% set paymentStatusTitle = payment.paymentStatus %}
+                            <div class="card">
+                                <p style="text-align: center;">{{ paymentStatusTitle }}</p>
+                            </div>
+                            <table class="col-12" border="1">
+                                <tbody>
+                                {% endif %}
+                                {% if payment.paymentStatus != paymentStatusTitle %}
+                                {% set paymentStatusTitle = payment.paymentStatus %}
+                                <tr>
+                                    <td><b><i>total:</i></b></td>
+                                    <td>€ {{ total }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            {% set total = 0 %}
+                            <div class="card">
+                                <p style="text-align: center;">{{ paymentStatusTitle }}</p>
+                            </div>
+
+                            <table class="col-12" border="1">
+                                <tbody>
+                                {% endif %}
+                                {% set total = total + payment.costs %}
+                                {{ macros.paymentStatusList(payment) }}
+                                {% endfor %}
+                                <tr>
+                                    <td><b><i>total:</i></b></td>
+                                    <td>€{{ total }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
-                <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
-                <a class="col-sm-12 btn btn-secondary btn-download" href="#" role="button">Link</a>
+
+
             </div>
         </div>
+
+
         <div class="js-menu-item-wrapper green">
             <h2 class="display-4 js-menu-item">transport</h2>
             <div style="display:none;">
                 <p class="col-1 lead js-form-menu-item">add</p>
                 <div class="js-item card-block">
-                    <div class="card-block" data-entity="Transport">
-                        <div data-url="{{ path('transport') }}" class="js-form-item" style="display:none;">
-                            {{ form(forms.transport) }}
-                        </div>
-                        {% for transport in transports %}
-                            {{ macros.addNewTransport(transport) }}
-                        {% endfor %}
+                    <div data-url="{{ path('new', {'_object': 'Transport'}) }}" class="js-form-item" style="display:none;">
+                        {{ form(forms.transport) }}
                     </div>
+                    {% for transport in transports %}
+                        {{ macros.transport(transport) }}
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+
         <div class="js-menu-item-wrapper brown">
             <h2 class="display-4 js-menu-item">hotels</h2>
-            <div class="js-item card-block" style="display:none;">
-                <div class="card-block">
-                    <p class="lead js-form-menu-item">add new</p>
-                    <div data-url="{{ path('hotel') }}" class="js-form-item" style="display:none;">
+            <div style="display:none;">
+                <p class="col-1 lead js-form-menu-item">add</p>
+                <div class="js-item card-block">
+                    <div data-url="{{ path('new', {'_object': 'Hotel'}) }}" class="js-form-item" style="display:none;">
                         {{ form(forms.hotel) }}
                     </div>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                    {% for hotel in hotels %}
+                        {{ macros.hotel(hotel) }}
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+
         <div class="js-menu-item-wrapper red">
             <h2 class="display-4 js-menu-item">attractions</h2>
-            <div class="js-item card-block" style="display:none;">
-                <div class="card-block">
-                    <p class="lead js-form-menu-item">add new</p>
-                    <div data-url="{{ path('attraction') }}" class="js-form-item" style="display:none;">
+            <div style="display:none;">
+                <p class="col-1 lead js-form-menu-item">add</p>
+                <div class="js-item card-block">
+                    <div data-url="{{ path('new', {'_object': 'Attraction'}) }}" class="js-form-item" style="display:none;">
                         {{ form(forms.attraction) }}
                     </div>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                    {% for attraction in attractions %}
+                        {{ macros.attraction(attraction) }}
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+
         <div class="js-menu-item-wrapper orange">
             <h2 class="display-4 js-menu-item">itinerary</h2>
-            <div class="js-item card-block">
-                <div class="card-block">
-                    <p id="refresh-itinerary" class="lead" style="display:none;">refresh page for updated itinerary</p>
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+            <div>
+                <div class="js-item card-block">
+                    {% for item in itinerary if "now" | date('Y-m-d') <= item.startsAt | date('Y-m-d') %}
+                        {{ macros.itinerary(item) }}
+                    {% endfor %}
+                    <div class="card card-block">
+                        <h2 style="text-align: center;" class="display-4">Past</h2>
+                    </div>
+                    {% for item in itinerary if "now" | date('Y-m-d') > item.startsAt | date('Y-m-d') %}
+                        {{ macros.itinerary(item) }}
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+
     </div>
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        var EuropeTravelsApp = {
-            initialize: function ($wrapper) {
-                this.$wrapper = $wrapper;
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            var EuropeTravelsApp = {
+                initialize: function ($wrapper) {
+                    this.$wrapper = $wrapper;
 
-                this.$wrapper.find('.js-menu-item').on(
-                    'click',
-                    this.handleMenuItemClick
-                );
+                    this.$wrapper.find('.js-menu-item').on(
+                        'click',
+                        this.handleMenuItemClick
+                    );
 
-                this.$wrapper.find('.js-form-menu-item').on(
-                    'click',
-                    this.handleFormMenuItemClick
-                );
+                    this.$wrapper.find('.js-form-menu-item').on(
+                        'click',
+                        this.handleFormMenuItemClick
+                    );
 
-                this.$wrapper.find('form').on(
-                    'submit',
-                    this.handleFormSubmit
-                );
+                    this.$wrapper.find('.js-row-title').on(
+                        'click',
+                        this.handleRowTitleClick
+                    );
 
-                this.$wrapper.find('.js-item-card-title').on(
-                    'click',
-                    this.handleCardTitleClick
-                );
+                    this.$wrapper.find('form').on(
+                        'submit',
+                        this.handleFormSubmit
+                    );
 
-                this.$wrapper.find('.js-btn-download').on(
-                    'click',
-                    this.handleButtonDownload
-                )
-            },
+                    this.$wrapper.find('.js-item-card-title').on(
+                        'click',
+                        this.handleCardTitleClick
+                    );
 
-            handleMenuItemClick: function () {
-                $(this).next('div').slideToggle();
-                $(this).parent().siblings().children().next().slideUp();
-            },
+                    this.$wrapper.find('.js-item-title').on(
+                        'click',
+                        this.handleTitleClick
+                    );
 
-            handleFormMenuItemClick: function () {
-                $(this).next().find('.js-form-item').slideToggle();
-            },
+                    this.$wrapper.find('.js-costs').on(
+                        'click',
+                        this.handleCostsClick
+                    );
 
-            handleFormSubmit: function (e) {
-                e.preventDefault();
+                    this.$wrapper.find('.js-payment-status-item').on(
+                        'click',
+                        this.handlePaymentStatusChange
+                    );
+                },
 
-                $.ajax({
-                    url: $(this).closest('div').data('url'),
-                    data: new FormData($(this)[0]),
-                    method: 'POST',
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    success: function (response) {
+                handleMenuItemClick: function () {
+                    $(this).next('div').slideToggle();
+                    $(this).parent().siblings().children().next().slideUp();
+                },
 
-                        var data = {
-                            'form': $(this).serializeArray(),
-                            'data': response
-                        };
+                handleFormMenuItemClick: function () {
+                    $(this).next().find('.js-form-item').slideToggle();
+                },
 
-                        addNewApp.handleFormSuccess(data)
+                handleRowTitleClick: function () {
+                    var $next = $(this).next();
+                    $next.slideToggle();
+                    $next.find('.js-item-card-title').click();
+                },
+
+                handleFormSubmit: function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: $(this).closest('div').data('url'),
+                        data: new FormData($(this)[0]),
+                        method: 'POST',
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        success: function (response) {
+                            addNewApp.handleFormSuccess({
+                                'form': $(this).serializeArray(),
+                                'data': response
+                            })
+                        }
+                    })
+                },
+
+                handleCardTitleClick: function() {
+                    $(this).next().slideToggle();
+                },
+
+                handleTitleClick: function() {
+                    $(this).next().next().slideToggle();
+                },
+
+                handleCostsClick: function () {
+                    var self = $(this);
+                    var costs = self.text().match(/\d+/)[0];
+                    var currency = self.data('currency');
+
+                    if (currency === 'EUR') {
+                        $.ajax({
+                            url: 'http://api.fixer.io/latest?symbols=IDR',
+                            success: function (data) {
+                                self.text('IDR ' + (costs * data.rates.IDR).toLocaleString());
+                                self.data('currency', costs);
+                            }
+                        })
+                    } else {
+                        self.text('€ ' + (self.data('currency').toLocaleString()));
+                        self.data('currency', 'EUR');
                     }
-                })
-            },
+                },
 
-            handleCardTitleClick: function() {
-                $(this).next().slideToggle();
-            },
+                handlePaymentStatusChange: function(e) {
+                    e.preventDefault();
 
-            handleButtonDownload: function () {
-                var $parent = $(this).closest('div');
-                $.ajax({
-                    url: '/check/' + $(this).data('description') + '/' + $parent.closest('div').data('entity') + '/' + $parent.data('id') + '/hash/' + $(this).data('hash'),
-                    method: 'GET',
-                    success: function (document) {
+                    var $dropDownMenu = $(this).closest('div');
+                    var paymentStatus = $(this).text();
 
-                    }
-                })
-            }
-
-        };
-
-        var addNewApp = {
-
-            handleFormSuccess: function(data) {
-                switch (data.data.form) {
-                    case 'transport':
-                        this.transport(data);
-                        break;
-                    case 'hotel':
-                        this.hotel(data);
-                        break;
-                    case 'attraction':
-                        this.attraction(data);
-                        break;
-                    case 'prepayment':
-                        this.prepayment(data);
-                        break;
-                    case 'document':
-                        this.document(data);
-                        break;
+                    $.ajax({
+                        url: '/api/payment-status',
+                        data: {
+                            'entity': $dropDownMenu.data('entity'),
+                            'id':     $dropDownMenu.data('id'),
+                            'paymentStatus': paymentStatus
+                        },
+                        method: 'POST',
+                        success: function () {
+                            $dropDownMenu.prev().text(paymentStatus);
+                        }
+                    })
                 }
-            },
 
-            transport: function (data) {
-                console.log(data);
-            },
+            };
 
-            hotel: function (data) {
+            var addNewApp = {
 
-            },
+                handleFormSuccess: function(data) {
+                    switch (data.data.form) {
+                        case 'transport':
+                            this.transport(data);
+                            break;
+                        case 'hotel':
+                            this.hotel(data);
+                            break;
+                        case 'attraction':
+                            this.attraction(data);
+                            break;
+                        case 'prepayment':
+                            this.prepayment(data);
+                            break;
+                        case 'document':
+                            this.document(data);
+                            break;
+                    }
+                },
 
-            attraction: function (data) {
+                transport: function (data) {
+                    console.log(data);
+                },
 
-            },
+                hotel: function (data) {
 
-            prepayment: function (data) {
+                },
 
-            },
+                attraction: function (data) {
 
-            document: function (data) {
+                },
 
-            }
-        };
+                prepayment: function (data) {
 
-        $(document).ready(function() {
-            var $menu = $('.js-menu');
-            EuropeTravelsApp.initialize($menu);
-        });
-    </script>
-{% endblock %}
+                },
+
+                document: function (data) {
+
+                }
+            };
+
+            $(document).ready(function() {
+                var $menu = $('.js-menu');
+                EuropeTravelsApp.initialize($menu);
+            });
+        </script>
+    {% endblock %}

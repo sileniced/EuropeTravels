@@ -2,8 +2,9 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Attractions;
-use AppBundle\FormType\LocalDateTimeType;
+use AppBundle\Entity\Attraction;
+use AppBundle\Entity\Itinerary;
+use AppBundle\Entity\PaymentStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -19,24 +20,22 @@ class AttractionFormType extends AbstractType
             ->add('city', ChoiceType::class, [
                 'choices' => [
                     'Düsseldorf' => 'Düsseldorf',
-                    'Venice' => 'Venice',
-                    'London' => 'London',
-                    'Prague' => 'Santorini',
-                    'Paris' => 'Paris',
-                    'other' => 'other'
+                    'Venice'     => 'Venice',
+                    'London'     => 'London',
+                    'Prague'     => 'Santorini',
+                    'Paris'      => 'Paris',
+                    'other'      => 'other'
                 ]
             ])
             ->add('description')
             ->add('link')
             ->add('address')
-            ->add('startsAt', LocalDateTimeType::class, [
-                'widget' => 'single_text',
+            ->add('itinerary', ItineraryEmbeddedForm::class, [
+                'data_class' => Itinerary::class
             ])
-            ->add('endsAt', LocalDateTimeType::class, [
-                'widget' => 'single_text',
+            ->add('paymentStatus', PaymentStatusEmbeddedForm::class, [
+                'data_class' => PaymentStatus::class
             ])
-            ->add('costs')
-            ->add('paymentStatus')
             ->add('documentDescription1')
             ->add('document1', FileType::class, ['required' => false])
             ->add('documentDescription2')
@@ -49,7 +48,7 @@ class AttractionFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Attractions::class,
+            'data_class' => Attraction::class,
             'attr' => [
                 'data-url' => '/api/attraction'
             ]

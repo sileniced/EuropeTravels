@@ -2,21 +2,23 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Prepayments;
+use AppBundle\Entity\PaymentStatus;
+use AppBundle\Entity\Payment;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PrepaymentFormType extends AbstractType
+class PaymentFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('description')
-            ->add('costs')
-            ->add('paymentStatus')
+            ->add('paymentStatus', PaymentStatusEmbeddedForm::class, [
+                'data_class' => PaymentStatus::class
+            ])
             ->add('documentDescription1')
             ->add('document1', FileType::class, ['required' => false])
             ->add('documentDescription2')
@@ -29,7 +31,7 @@ class PrepaymentFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Prepayments::class,
+            'data_class' => Payment::class,
             'attr' => [
                 'data-url' => 'api/prepayment'
             ]

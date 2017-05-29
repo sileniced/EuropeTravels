@@ -16,7 +16,8 @@ class TransportRepository extends EntityRepository
     public function findAllOrderedByStartsAt()
     {
         return $this->createQueryBuilder('transport')
-            ->orderBy('transport.startsAt', 'ASC')
+            ->join('transport.itinerary', 'itinerary')
+            ->orderBy('itinerary.startsAt', 'ASC')
             ->getQuery()
             ->execute();
     }

@@ -16,7 +16,8 @@ class HotelRepository extends EntityRepository
     public function findAllOrderedByStartsAt()
     {
         return $this->createQueryBuilder('hotel')
-            ->orderBy('hotel.startsAt', 'ASC')
+            ->join('hotel.itinerary', 'itinerary')
+            ->orderBy('itinerary.startsAt', 'ASC')
             ->getQuery()
             ->execute();
     }

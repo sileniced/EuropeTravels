@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Vince
  * Date: 22-5-2017
- * Time: 22:13
+ * Time: 22:12
  */
 
 namespace AppBundle\Entity;
@@ -12,10 +12,10 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="prepayments")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\HotelRepository")
+ * @ORM\Table(name="hotel")
  */
-class Prepayments
+class Hotel
 {
     /**
      * @ORM\Id
@@ -27,15 +27,30 @@ class Prepayments
     /**
      * @ORM\Column(type="string")
      */
-    private $description;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $costs;
+    private $city;
 
     /**
      * @ORM\Column(type="string")
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $link;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $address;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Itinerary", inversedBy="hotel", cascade={"persist"})
+     */
+    private $itinerary;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\PaymentStatus", inversedBy="hotel", cascade={"persist"})
      */
     private $paymentStatus;
 
@@ -94,33 +109,65 @@ class Prepayments
     /**
      * @return mixed
      */
-    public function getDescription()
+    public function getName()
     {
-        return $this->description;
+        return $this->name;
     }
 
     /**
-     * @param mixed $description
+     * @param mixed $name
      */
-    public function setDescription($description)
+    public function setName($name)
     {
-        $this->description = $description;
+        $this->name = $name;
     }
 
     /**
      * @return mixed
      */
-    public function getCosts()
+    public function getLink()
     {
-        return $this->costs;
+        return $this->link;
     }
 
     /**
-     * @param mixed $costs
+     * @param mixed $link
      */
-    public function setCosts($costs)
+    public function setLink($link)
     {
-        $this->costs = $costs;
+        $this->link = $link;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getItinerary()
+    {
+        return $this->itinerary;
+    }
+
+    /**
+     * @param mixed $itinerary
+     */
+    public function setItinerary($itinerary)
+    {
+        $this->itinerary = $itinerary;
     }
 
     /**
@@ -281,6 +328,22 @@ class Prepayments
     public function setDocumentPath3($documentPath3)
     {
         $this->documentPath3 = $documentPath3;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param mixed $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
     }
 
 }

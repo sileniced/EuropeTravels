@@ -16,7 +16,8 @@ class AttractionRepository extends EntityRepository
     public function findAllOrderedByStartsAt()
     {
         return $this->createQueryBuilder('attraction')
-            ->orderBy('attraction.startsAt', 'ASC')
+            ->join('attraction.itinerary', 'itinerary')
+            ->orderBy('itinerary.startsAt', 'ASC')
             ->getQuery()
             ->execute();
     }

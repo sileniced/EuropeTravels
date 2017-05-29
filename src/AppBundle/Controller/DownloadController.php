@@ -38,13 +38,13 @@ class DownloadController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('Appbundle:' . $_entity)
+        $entity = $em->getRepository('AppBundle:' . $_entity)
             ->findOneBy(['id' => $id]);
 
         if ($entity->getDocumentPath1() != $_hash) {
             if ($entity->getDocumentPath2() != $_hash) {
                 if ($entity->getDocumentPath3() != $_hash) {
-                    return new Response(null, 500);
+                    return new Response(null, 403);
                 }
             }
         }

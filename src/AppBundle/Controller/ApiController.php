@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\PaymentStatus;
 use AppBundle\Entity\Hash;
 use AppBundle\Entity\Itinerary;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -28,15 +29,51 @@ class ApiController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/transport", name="transport")
+     * @Route("/new/payment", name="payment")
      * @Method("POST")
      * @return Response
      */
-    public function TransportAction(Request $request)
+    public function NewPaymentAction(Request $request)
     {
-        $form = $this->createForm('AppBundle\Form\TransportFormType')->handleRequest($request);
+        $form = $this->createForm('AppBundle\Form\PaymentFormType')->handleRequest($request);
         if ($form->isValid()) {
-            $transport = $form->getData();
+
+            return new Response('payment', 200);
+        }
+
+        return new Response(null, 500);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/new/document", name="document")
+     * @Method("POST")
+     * @return Response
+     */
+    public function NewDocumentAction(Request $request)
+    {
+        $form = $this->createForm('AppBundle\Form\DocumentFormType')->handleRequest($request);
+        if ($form->isValid()) {
+
+            return new Response('document', 200);
+        }
+
+        return new Response(null, 500);
+    }
+
+    /**
+     * @param Request $request
+     * @param $_object
+     * @return Response
+     * @Route("/new/{_object}", name="new")
+     * @Method("POST")
+     */
+    public function NewAction(Request $request, $_object)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm('AppBundle\Form\\' . $_object . 'FormType')->handleRequest($request);
+        if ($form->isValid()) {
+            $object = $form->getData();
 
             $document = [];
             for ($i = 1; $i <= 3; $i++) {
@@ -44,27 +81,20 @@ class ApiController extends Controller
                 $setDocumentPath = 'setDocumentPath' . $i;
                 $getDocumentDescription = 'getDocumentDescription' . $i;
 
-                if ($transport->$getDocument()) {
-                    $hash = $this->documentUploader($transport->$getDocument());
-                    $transport->$setDocumentPath($hash);
+                if ($object->$getDocument()) {
+                    $hash = $this->documentUploader($object->$getDocument());
+                    $object->$setDocumentPath($hash);
                     $document[$i] = [
-                        'description' => $transport->$getDocumentDescription(),
+                        'description' => $object->$getDocumentDescription(),
                         'hash' => $hash
                     ];
                 }
             }
 
-            $startsAt = $transport->getStartsAt();
-            $endsAt = $transport->getEndsAt();
+            $object->getItinerary()->setEntity($_object);
+            $object->getPaymentStatus()->setEntity($_object);
 
-            $itinerary = new Itinerary();
-            $itinerary->setStartsAt($startsAt);
-            $itinerary->setEndsAt($endsAt);
-            $itinerary->setTransport($transport);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($transport);
-            $em->persist($itinerary);
+            $em->persist($object);
             $em->flush();
 
             $data = [
@@ -79,73 +109,31 @@ class ApiController extends Controller
     }
 
     /**
+     * @Route("/payment-status", name="PaymentStatus")
      * @param Request $request
-     * @Route("/hotel", name="hotel")
-     * @Method("POST")
      * @return Response
      */
-    public function HotelAction(Request $request)
+    public function paymentStatusChangeAction(Request $request)
     {
-        $form = $this->createForm('AppBundle\Form\HotelFormType')->handleRequest($request);
-        if ($form->isValid()) {
 
-            return new Response('hotel', 200);
-        }
+        $bag = $request->request;
+        $em = $this->getDoctrine()->getManager();
 
-        return new Response(null, 500);
+        $object = $em->getRepository('AppBundle:' . $bag->get('entity'))
+            ->find($bag->get('id'));
+
+        $object->getPaymentStatus()->setPaymentStatus($bag->get('paymentStatus'));
+
+        $em->merge($object);
+        $em->flush();
+
+        return new Response(null, 204);
     }
 
     /**
-     * @param Request $request
-     * @Route("/attraction", name="attraction")
-     * @Method("POST")
-     * @return Response
+     * @param $file
+     * @return string
      */
-    public function AttractionAction(Request $request)
-    {
-        $form = $this->createForm('AppBundle\Form\AttractionFormType')->handleRequest($request);
-        if ($form->isValid()) {
-
-            return new Response('attraction', 200);
-        }
-
-        return new Response(null, 500);
-    }
-
-    /**
-     * @param Request $request
-     * @Route("/prepayment", name="prepayment")
-     * @Method("POST")
-     * @return Response
-     */
-    public function PrepaymentAction(Request $request)
-    {
-        $form = $this->createForm('AppBundle\Form\PrepaymentFormType')->handleRequest($request);
-        if ($form->isValid()) {
-
-            return new Response('prepayment', 200);
-        }
-
-        return new Response(null, 500);
-    }
-
-    /**
-     * @param Request $request
-     * @Route("/document", name="document")
-     * @Method("POST")
-     * @return Response
-     */
-    public function DocumentAction(Request $request)
-    {
-        $form = $this->createForm('AppBundle\Form\DocumentFormType')->handleRequest($request);
-        if ($form->isValid()) {
-
-            return new Response('document', 200);
-        }
-
-        return new Response(null, 500);
-    }
-
     private function documentUploader($file)
     {
         $hashGenerator = $this->get('app.hash_generator');
