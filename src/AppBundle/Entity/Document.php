@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="documents")
+ * @ORM\Table(name="document")
  */
-class Documents
+class Document
 {
     /**
      * @ORM\Id

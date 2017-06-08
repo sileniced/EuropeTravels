@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Vince
  * Date: 22-5-2017
- * Time: 22:12
+ * Time: 22:13
  */
 
 namespace AppBundle\Entity;
@@ -12,10 +12,10 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Repository\HotelRepository")
- * @ORM\Table(name="hotels")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AttractionRepository")
+ * @ORM\Table(name="attraction")
  */
-class Hotels
+class Attraction
 {
     /**
      * @ORM\Id
@@ -40,29 +40,19 @@ class Hotels
     private $link;
 
     /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Itinerary", inversedBy="attraction", cascade={"persist"})
+     */
+    private $itinerary;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\PaymentStatus", inversedBy="attraction", cascade={"persist"})
+     */
+    private $paymentStatus;
+
+    /**
      * @ORM\Column(type="text")
      */
     private $address;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $startsAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $endsAt;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $costs;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $paymentStatus;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -119,6 +109,22 @@ class Hotels
     /**
      * @return mixed
      */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getLink()
     {
         return $this->link;
@@ -135,65 +141,17 @@ class Hotels
     /**
      * @return mixed
      */
-    public function getAddress()
+    public function getItinerary()
     {
-        return $this->address;
+        return $this->itinerary;
     }
 
     /**
-     * @param mixed $address
+     * @param mixed $itinerary
      */
-    public function setAddress($address)
+    public function setItinerary($itinerary)
     {
-        $this->address = $address;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStartsAt()
-    {
-        return $this->startsAt;
-    }
-
-    /**
-     * @param mixed $startsAt
-     */
-    public function setStartsAt($startsAt)
-    {
-        $this->startsAt = $startsAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEndsAt()
-    {
-        return $this->endsAt;
-    }
-
-    /**
-     * @param mixed $endsAt
-     */
-    public function setEndsAt($endsAt)
-    {
-        $this->endsAt = $endsAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCosts()
-    {
-        return $this->costs;
-    }
-
-    /**
-     * @param mixed $costs
-     */
-    public function setCosts($costs)
-    {
-        $this->costs = $costs;
+        $this->itinerary = $itinerary;
     }
 
     /**
@@ -210,6 +168,22 @@ class Hotels
     public function setPaymentStatus($paymentStatus)
     {
         $this->paymentStatus = $paymentStatus;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
     }
 
     /**
@@ -370,22 +344,6 @@ class Hotels
     public function setCity($city)
     {
         $this->city = $city;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
     }
 
 }

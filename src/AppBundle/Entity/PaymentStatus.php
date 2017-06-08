@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Vince
- * Date: 24-5-2017
- * Time: 19:48
+ * User: iuppiter NUC
+ * Date: 29-5-2017
+ * Time: 14:15
  */
 
 namespace AppBundle\Entity;
@@ -12,10 +12,10 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ItineraryRepository")
- * @ORM\Table(name="itinerary")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PaymentStatusRepository")
+ * @ORM\Table(name="payment_status")
  */
-class Itinerary
+class PaymentStatus
 {
 
     /**
@@ -26,14 +26,14 @@ class Itinerary
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="float")
      */
-    private $startsAt;
+    private $costs;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="string")
      */
-    private $endsAt;
+    private $paymentStatus;
 
     /**
      * @ORM\Column(type="string")
@@ -41,17 +41,22 @@ class Itinerary
     private $entity;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Transport", mappedBy="itinerary")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Payment", mappedBy="paymentStatus")
+     */
+    private $payment;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Transport", mappedBy="paymentStatus")
      */
     private $transport;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Hotel", mappedBy="itinerary")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Hotel", mappedBy="paymentStatus")
      */
     private $hotel;
 
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Attraction", mappedBy="itinerary")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Attraction", mappedBy="paymentStatus")
      */
     private $attraction;
 
@@ -74,33 +79,33 @@ class Itinerary
     /**
      * @return mixed
      */
-    public function getStartsAt()
+    public function getCosts()
     {
-        return $this->startsAt;
+        return $this->costs;
     }
 
     /**
-     * @param mixed $startsAt
+     * @param mixed $costs
      */
-    public function setStartsAt($startsAt)
+    public function setCosts($costs)
     {
-        $this->startsAt = $startsAt;
+        $this->costs = $costs;
     }
 
     /**
      * @return mixed
      */
-    public function getEndsAt()
+    public function getPaymentStatus()
     {
-        return $this->endsAt;
+        return $this->paymentStatus;
     }
 
     /**
-     * @param mixed $endsAt
+     * @param mixed $paymentStatus
      */
-    public function setEndsAt($endsAt)
+    public function setPaymentStatus($paymentStatus)
     {
-        $this->endsAt = $endsAt;
+        $this->paymentStatus = $paymentStatus;
     }
 
     /**
@@ -117,6 +122,22 @@ class Itinerary
     public function setEntity($entity)
     {
         $this->entity = $entity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPayment()
+    {
+        return $this->payment;
+    }
+
+    /**
+     * @param mixed $payment
+     */
+    public function setPayment($payment)
+    {
+        $this->payment = $payment;
     }
 
     /**

@@ -25,6 +25,11 @@ class Transport
     private $id;
 
     /**
+     * @ORM\Column(type="text")
+     */
+    private $address;
+
+    /**
      * @ORM\Column(type="string")
      */
     private $description;
@@ -40,22 +45,12 @@ class Transport
     private $meansOfTransport;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Itinerary", inversedBy="transport", cascade={"persist"})
      */
-    private $startsAt;
+    private $itinerary;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $endsAt;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $costs;
-
-    /**
-     * @ORM\Column(type="string")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\PaymentStatus", inversedBy="transport", cascade={"persist"})
      */
     private $paymentStatus;
 
@@ -130,6 +125,22 @@ class Transport
     /**
      * @return mixed
      */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getDescription()
     {
         return $this->description;
@@ -162,49 +173,17 @@ class Transport
     /**
      * @return mixed
      */
-    public function getStartsAt()
+    public function getItinerary()
     {
-        return $this->startsAt;
+        return $this->itinerary;
     }
 
     /**
-     * @param mixed $startsAt
+     * @param mixed $itinerary
      */
-    public function setStartsAt($startsAt)
+    public function setItinerary($itinerary)
     {
-        $this->startsAt = $startsAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEndsAt()
-    {
-        return $this->endsAt;
-    }
-
-    /**
-     * @param mixed $endsAt
-     */
-    public function setEndsAt($endsAt)
-    {
-        $this->endsAt = $endsAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCosts()
-    {
-        return $this->costs;
-    }
-
-    /**
-     * @param mixed $costs
-     */
-    public function setCosts($costs)
-    {
-        $this->costs = $costs;
+        $this->itinerary = $itinerary;
     }
 
     /**

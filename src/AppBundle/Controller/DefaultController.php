@@ -14,20 +14,20 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-
         return $this->render('default/index.html.twig', [
-            'prepayments' =>    $em->getRepository('AppBundle:Prepayments')->findAll(),
             'transports' =>     $em->getRepository('AppBundle:Transport')->findAllOrderedByStartsAt(),
-            'hotels' =>         $em->getRepository('AppBundle:Hotels')->findAllOrderedByStartsAt(),
-            'attractions' =>    $em->getRepository('AppBundle:Attractions')->findAllOrderedByStartsAt(),
-            'documents' =>      $em->getRepository('AppBundle:Documents')->findAll(),
+            'hotels' =>         $em->getRepository('AppBundle:Hotel')->findAllOrderedByStartsAt(),
+            'attractions' =>    $em->getRepository('AppBundle:Attraction')->findAllOrderedByStartsAt(),
+            'documents' =>      $em->getRepository('AppBundle:Document')->findAll(),
             'itinerary' =>      $em->getRepository('AppBundle:Itinerary')->findAllOrderedByStartsAt(),
+            'payments' =>       $em->getRepository('AppBundle:Payment')->findAll(),
+            'paymentStatus' =>  $em->getRepository('AppBundle:PaymentStatus')->findGroupedByStatus(),
             'forms' => [
                 'document' =>   $this->createForm('AppBundle\Form\DocumentFormType')->createView(),
                 'transport' =>  $this->createForm('AppBundle\Form\TransportFormType')->createView(),
                 'hotel' =>      $this->createForm('AppBundle\Form\HotelFormType')->createView(),
                 'attraction'=>  $this->createForm('AppBundle\Form\AttractionFormType')->createView(),
-                'prepayment'=>  $this->createForm('AppBundle\Form\PrepaymentFormType')->createView()
+                'payment'=>     $this->createForm('AppBundle\Form\PaymentFormType')->createView()
             ]
         ]);
     }
