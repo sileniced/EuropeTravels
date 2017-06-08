@@ -60,6 +60,7 @@
     {% if transport.documentPath1 %}
         <button class="col-sm-12 btn btn-secondary js-btn-download"
                 data-hash="{{ transport.documentPath1 }}"
+                data-description="{{ transport.documentDescription1 | title | replace(' ', '') }}"
                 type="button">
             {{ transport.documentDescription1 }}
         </button>
@@ -67,6 +68,7 @@
     {% if transport.documentPath2 %}
         <button class="col-sm-12 btn btn-secondary js-btn-download"
                 data-hash="{{ transport.documentPath2 }}"
+                data-description="{{ transport.documentDescription2 | title | replace(' ', '') }}"
                 type="button">
             {{ transport.documentDescription2 }}
         </button>
@@ -74,6 +76,7 @@
     {% if transport.documentPath3 %}
         <button class="col-sm-12 btn btn-secondary js-btn-download"
                 data-hash="{{ transport.documentPath3 }}"
+                data-description="{{ transport.documentDescription3 | title | replace(' ', '') }}"
                 type="button">
             {{ transport.documentDescription3 }}
         </button>
@@ -238,8 +241,11 @@
 
             handleButtonDownload: function () {
                 var $parent = $(this).closest('div');
+
+                console.log($parent.closest('div'));
+
                 $.ajax({
-                    url: '/check/' + $(this).data('description') + '/' + $parent.closest('div').data('entity') + '/' + $parent.data('id') + '/hash/' + $(this).data('hash'),
+                    url: '/check/' + $(this).data('description') + '/' + $parent.parent().data('entity') + '/' + $parent.data('id') + '/hash/' + $(this).data('hash'),
                     method: 'GET',
                     success: function (document) {
 
