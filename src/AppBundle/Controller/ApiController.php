@@ -91,9 +91,6 @@ class ApiController extends Controller
                 }
             }
 
-            $object->getItinerary()->setEntity($_object);
-            $object->getPaymentStatus()->setEntity($_object);
-
             $em->persist($object);
             $em->flush();
 

@@ -27,11 +27,6 @@ class Document
     /**
      * @ORM\Column(type="string")
      */
-    private $category;
-
-    /**
-     * @ORM\Column(type="string")
-     */
     private $description;
 
     private $document;
@@ -40,6 +35,31 @@ class Document
      * @ORM\Column(type="string")
      */
     private $documentPath;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $entity;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Payment", inversedBy="documents")
+     */
+    private $payment;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Transport", inversedBy="documents")
+     */
+    private $transport;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Hotel", inversedBy="documents")
+     */
+    private $hotel;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Attraction", inversedBy="documents")
+     */
+    private $attraction;
 
     /**
      * @return mixed
@@ -55,22 +75,6 @@ class Document
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
-    /**
-     * @param mixed $category
-     */
-    public function setCategory($category)
-    {
-        $this->category = $category;
     }
 
     /**
@@ -119,6 +123,86 @@ class Document
     public function setDocumentPath($documentPath)
     {
         $this->documentPath = $documentPath;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param mixed $entity
+     */
+    public function setEntity($entity)
+    {
+        $this->entity = $entity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPayment()
+    {
+        return $this->payment;
+    }
+
+    /**
+     * @param mixed $payment
+     */
+    public function setPayment($payment)
+    {
+        $this->payment = $payment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTransport()
+    {
+        return $this->transport;
+    }
+
+    /**
+     * @param mixed $transport
+     */
+    public function setTransport($transport)
+    {
+        $this->transport = $transport;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHotel()
+    {
+        return $this->hotel;
+    }
+
+    /**
+     * @param mixed $hotel
+     */
+    public function setHotel($hotel)
+    {
+        $this->hotel = $hotel;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttraction()
+    {
+        return $this->attraction;
+    }
+
+    /**
+     * @param mixed $attraction
+     */
+    public function setAttraction($attraction)
+    {
+        $this->attraction = $attraction;
     }
 
 
