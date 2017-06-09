@@ -37,7 +37,9 @@ class TransportFormType extends AbstractType
                     'plane' => 'plane',
                     'train' => 'train',
                     'boat'  => 'boat',
-                    'taxi'  => 'taxi'
+                    'bus'   => 'bus',
+                    'taxi'  => 'taxi',
+                    'car'   => 'car'
                 ]
             ])
             ->add('itinerary', ItineraryEmbeddedForm::class, [

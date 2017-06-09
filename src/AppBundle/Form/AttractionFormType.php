@@ -20,12 +20,16 @@ class AttractionFormType extends AbstractType
         $builder
             ->add('city', ChoiceType::class, [
                 'choices' => [
-                    'Düsseldorf' => 'Düsseldorf',
-                    'Venice'     => 'Venice',
-                    'London'     => 'London',
-                    'Prague'     => 'Santorini',
-                    'Paris'      => 'Paris',
-                    'other'      => 'other'
+                    'Düsseldorf'    => 'Düsseldorf',
+                    'Venice'        => 'Venice',
+                    'Hilversum'     => 'Hilversum',
+                    'Phantasialand' => 'Phantasialand',
+                    'London'        => 'London',
+                    'Prague'        => 'Prague',
+                    'Brussels'      => 'Brussels',
+                    'Paris'         => 'Paris',
+                    'DisneyLand'    => 'DisneyLand',
+                    'other'         => 'other'
                 ]
             ])
             ->add('description')

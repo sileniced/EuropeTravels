@@ -1,0 +1,23 @@
+{% set objForm = forms.attraction %}
+{{ form_start(objForm) }}
+{{ form_row(objForm.city) }}
+{{ form_row(objForm.description) }}
+{{ form_row(objForm.link) }}
+{{ form_row(objForm.address) }}
+{{ form_row(objForm.ininerary) }}
+{{ form_row(objForm.paymentStatus) }}
+<div class="js-document-wrapper"
+     data-prototype="{{ macros.embeddedDocument(objForm.documents.vars.prototype) | e('html_attr') }}"
+     data-index="{{ objForm.documents | length }}"
+>
+    {% for documentForm in objForm.documents %}
+        {{ macros.embeddedDocument(documentForm) }}
+    {% endfor %}
+    <a href="#" class="js-picture-add white-text">
+        <i class="tiny material-icons">library_add</i>
+        Add another document
+    </a>
+</div>
+{{ form_widget(objForm.documents) }}
+{{ form_widget(objForm._token) }}
+{{ form_end(objForm, {'render_rest': false})) }}

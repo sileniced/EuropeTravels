@@ -76,20 +76,20 @@ class ApiController extends Controller
             $object = $form->getData();
 
             $document = [];
-            for ($i = 1; $i <= 3; $i++) {
-                $getDocument = 'getDocument' . $i;
-                $setDocumentPath = 'setDocumentPath' . $i;
-                $getDocumentDescription = 'getDocumentDescription' . $i;
-
-                if ($object->$getDocument()) {
-                    $hash = $this->documentUploader($object->$getDocument());
-                    $object->$setDocumentPath($hash);
-                    $document[$i] = [
-                        'description' => $object->$getDocumentDescription(),
-                        'hash' => $hash
-                    ];
-                }
-            }
+//            for ($i = 1; $i <= 3; $i++) {
+//                $getDocument = 'getDocument' . $i;
+//                $setDocumentPath = 'setDocumentPath' . $i;
+//                $getDocumentDescription = 'getDocumentDescription' . $i;
+//
+//                if ($object->$getDocument()) {
+//                    $hash = $this->documentUploader($object->$getDocument());
+//                    $object->$setDocumentPath($hash);
+//                    $document[$i] = [
+//                        'description' => $object->$getDocumentDescription(),
+//                        'hash' => $hash
+//                    ];
+//                }
+//            }
 
             $em->persist($object);
             $em->flush();

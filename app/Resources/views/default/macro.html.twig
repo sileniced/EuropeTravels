@@ -1,0 +1,154 @@
+{% macro transport(transport) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ transport.description }}</h4>
+        <h5>{{ transport.category }}</h5>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;">{{ transport.meansOfTransport | capitalize }}</h6>
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ transport.address }}">{{ transport.address }}</a></h6>
+        {{ macros.itineraryPiece(transport.itinerary) }}
+        {{ macros.paymentStatus(transport, 'Transport') }}<br>
+        {{ macros.objectDocuments(transport, 'Transport') }}
+    </div>
+    <hr>
+{% endmacro %}
+
+{% macro hotel(hotel) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ hotel.city }}</h4>
+        <h5>{{ hotel.name }}</h5>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ hotel.address }}">{{ hotel.address }}</a></h6>
+        {{ macros.itineraryPiece(hotel.itinerary) }}
+        <a target="_blank" href="{{ hotel.link }}">website</a><br>
+        {{ macros.paymentStatus(hotel, 'Hotel') }}<br>
+        {{ macros.objectDocuments(hotel, 'Hotel') }}
+    </div>
+    <hr>
+{% endmacro %}
+
+{% macro attraction(attraction) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ attraction.city }}</h4>
+        <h5>{{ attraction.description }}</h5>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ attraction.address }}">{{ attraction.address }}</a></h6>
+        {{ macros.itineraryPiece(attraction.itinerary) }}
+        <a target="_blank" href="{{ attraction.link }}">website</a><br>
+        {{ macros.paymentStatus(attraction, 'Attraction') }}<br>
+        {{ macros.objectDocuments(attraction, 'Attraction') }}
+    </div>
+    <hr>
+{% endmacro %}
+
+{% macro itinerary(object) %}{% import _self as macros %}
+    <div class="js-item-title">
+        <h3 class="display-4">{{ object.entity }}</h3>
+        <h4>{{ object.startsAt | date('D j-n  G:i') }}</h4>
+        <h5>{{ object.endsAt | date('D j-n  G:i') }}</h5>
+    </div>
+    {% if object.entity == 'Transport' %}
+        {{ macros.transport(object.transport) }}
+    {% elseif object.entity == 'Hotel' %}
+        {{ macros.hotel(object.hotel) }}
+    {% elseif object.entity == 'Attraction' %}
+        {{ macros.attraction(object.attraction) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro paymentStatusList(payment) %}{% import _self as macros %}
+    <tr class="js-row-title">
+        <td width="75%">
+            {% if payment.entity == 'Transport' %}
+                {{ payment.transport.description }}
+            {% elseif payment.entity == 'Hotel' %}
+                {{ payment.hotel.name }}
+            {% elseif payment.entity == 'Attraction' %}
+                {{ payment.attraction.description }}
+            {% elseif payment.entity == 'Payment' %}
+                {{ payment.payment.description }}
+            {% endif %}
+        </td>
+        <td width="25%">€{{ payment.costs }}</td>
+    </tr>
+    <tr style="display: none;">
+        <td colspan="2">
+            <h3 class="display-4" style="text-align: center;">{{ payment.entity }}</h3>
+            {% if payment.entity == 'Transport' %}
+                {{ macros.transport(payment.transport) }}
+            {% elseif payment.entity == 'Hotel' %}
+                {{ macros.hotel(payment.hotel) }}
+            {% elseif payment.entity == 'Attraction' %}
+                {{ macros.attraction(payment.attraction) }}
+            {% elseif payment.entity == 'Payment' %}
+                {{ macros.payment(payment.payment) }}
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{% macro document() %}
+
+{% endmacro %}
+
+{% macro embeddedDocument(documentForm) %}
+    <div class="js-document-item">
+        <a href="#" class="js-remove-document">
+            <i class="material-icons white-text">delete</i>
+        </a>
+        {{ form_row(documentForm.description) }}
+        <div class="file-field input-field">
+            <div class="btn white orange accent-2">
+                <span>Document</span>
+                {{ form_widget(documentForm.document) }}
+            </div>
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" />
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment() %}
+
+{% endmacro %}
+
+{% macro itineraryPiece(itinerary) %}
+    From: {{ itinerary.startsAt | date('D j-n  G:i') }}<br>
+    To: {{ itinerary.endsAt | date('D j-n  G:i') }}<br><br>
+{% endmacro %}
+
+{% macro paymentStatus(object, entity) %}
+    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+        <button type="button" class="btn btn-secondary js-costs" data-currency="EUR" data-idr>€ {{ object.paymentStatus.costs }}</button>
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ object.paymentStatus.paymentStatus }}
+            </button>
+            <div class="dropdown-menu js-payment-status" data-entity="{{ entity }}" data-id="{{ object.id }}" aria-labelledby="btnGroupDrop1">
+                <a class="dropdown-item js-payment-status-item" href="#">Booked CC 4086</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Booked CC 7501</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Charged CC 4086</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Charged CC 7501</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Completed</a>
+                <a class="dropdown-item js-payment-status-item" href="#">To be paid cash</a>
+                <a class="dropdown-item js-payment-status-item" href="#">To be paid CC</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro objectDocuments(object, entity) %}
+
+    {% for document in object.documents %}
+        <a target="_blank"
+           class="col-sm-12 btn btn-secondary"
+           role="button"
+           href="{{ documentLink(document.description, entity, object.id, document.documentPath) }}">
+            {{ document.description }}
+        </a>
+    {% endfor %}
+
+{% endmacro %}
