@@ -19,6 +19,10 @@
             text-align: center;
         }
 
+        .js-document-wrapper {
+            margin-bottom: 30px;
+        }
+
         .blue {
             background-color: #DEF0F2;
         }
@@ -241,9 +245,15 @@
                         this.handlePaymentStatusChange
                     );
 
-                    this.$wrapper.find('js-remove-document').on(
+                    this.$wrapper.find('.js-document-wrapper').on(
                         'click',
+                        '.js-remove-document',
                         this.handleFormDocumentRemove
+                    );
+
+                    this.$wrapper.find('.js-document-add').on(
+                        'click',
+                        this.handleFormDocumentAdd
                     )
                 },
 
@@ -330,7 +340,19 @@
 
                 handleFormDocumentRemove: function(e) {
                     e.preventDefault();
-                    $(this).closest('js-document-item').remove();
+                    $(this).closest('.js-document-item').remove();
+                },
+
+                handleFormDocumentAdd: function (e) {
+                    e.preventDefault();
+
+                    var $documentWrapper = $(this).closest('.js-document-wrapper');
+                    var prototype = $documentWrapper.data('prototype');
+                    var index = $documentWrapper.data('index');
+                    var newForm = prototype.replace(/__name__/g, index);
+                    $documentWrapper.data('index', index + 1);
+                    $(this).before(newForm);
+
                 }
 
             };

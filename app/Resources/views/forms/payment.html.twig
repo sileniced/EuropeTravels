@@ -1,0 +1,20 @@
+{% set objForm = forms.payment %}
+{{ form_start(objForm) }}
+{{ form_row(objForm.description) }}
+{{ form_row(objForm.paymentStatus) }}
+<div class="js-document-wrapper"
+     data-prototype="{{ macros.embeddedDocument(objForm.documents.vars.prototype) | e('html_attr') }}"
+     data-index="{{ objForm.documents | length }}"
+>
+    {% for documentForm in objForm.documents %}
+        {{ macros.embeddedDocument(documentForm) }}
+    {% endfor %}
+    <a href="#" class="js-document-add white-text">
+        Add another document
+    </a>
+</div>
+{{ form_widget(objForm.documents) }}
+{{ form_widget(objForm.submit) }}
+{{ form_widget(objForm._token) }}
+
+{{ form_end(objForm, {'render_rest': false}) }}

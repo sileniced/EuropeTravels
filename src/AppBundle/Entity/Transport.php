@@ -58,7 +58,7 @@ class Transport
     /**
      * @ORM\OneToMany(
      *     targetEntity="AppBundle\Entity\Document",
-     *     mappedBy="attraction"
+     *     mappedBy="attraction",
      *     orphanRemoval=true,
      *     cascade={"persist"}
      * )

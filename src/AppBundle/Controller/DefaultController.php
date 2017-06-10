@@ -23,7 +23,7 @@ class DefaultController extends Controller
             'payments' =>       $em->getRepository('AppBundle:Payment')->findAll(),
             'paymentStatus' =>  $em->getRepository('AppBundle:PaymentStatus')->findGroupedByStatus(),
             'forms' => [
-                'document' =>   $this->createForm('AppBundle\Form\DocumentFormType')->createView(),
+                'document' =>   $this->createForm('AppBundle\Form\DocumentEmbeddedForm')->createView(),
                 'transport' =>  $this->createForm('AppBundle\Form\TransportFormType')->createView(),
                 'hotel' =>      $this->createForm('AppBundle\Form\HotelFormType')->createView(),
                 'attraction'=>  $this->createForm('AppBundle\Form\AttractionFormType')->createView(),

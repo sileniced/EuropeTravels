@@ -94,18 +94,12 @@
 {% endmacro %}
 
 {% macro embeddedDocument(documentForm) %}
-    <div class="js-document-item">
-        <a href="#" class="js-remove-document">
-            <i class="material-icons white-text">delete</i>
-        </a>
+    <div class="js-document-item card card-block">
+        <a href="#" class="js-remove-document">delete</a>
         {{ form_row(documentForm.description) }}
         <div class="file-field input-field">
             <div class="btn white orange accent-2">
-                <span>Document</span>
                 {{ form_widget(documentForm.document) }}
-            </div>
-            <div class="file-path-wrapper">
-                <input class="file-path validate" type="text" />
             </div>
         </div>
     </div>
