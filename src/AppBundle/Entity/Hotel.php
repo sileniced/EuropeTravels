@@ -58,7 +58,7 @@ class Hotel
     /**
      * @ORM\OneToMany(
      *     targetEntity="AppBundle\Entity\Document",
-     *     mappedBy="attraction",
+     *     mappedBy="hotel",
      *     orphanRemoval=true,
      *     cascade={"persist"}
      * )

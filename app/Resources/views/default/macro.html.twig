@@ -71,7 +71,7 @@
                 {{ payment.payment.description }}
             {% endif %}
         </td>
-        <td width="25%">€{{ payment.costs }}</td>
+        <td width="25%">{{ currency(payment.currency) }} {{ payment.costs }}</td>
     </tr>
     <tr style="display: none;">
         <td colspan="2">
@@ -93,7 +93,7 @@
 
 {% endmacro %}
 
-{% macro embeddedDocument(documentForm) %}
+{% macro formDocument(documentForm) %}
     <div class="js-document-item card card-block">
         <a href="#" class="js-remove-document">delete</a>
         {{ form_row(documentForm.description) }}
@@ -116,7 +116,14 @@
 
 {% macro paymentStatus(object, entity) %}
     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-        <button type="button" class="btn btn-secondary js-costs" data-currency="EUR" data-idr>€ {{ object.paymentStatus.costs }}</button>
+        <button type="button"
+                class="btn btn-secondary js-costs"
+                data-base-currency="{{ object.paymentStatus.currency }}"
+                data-show-currency="{{ object.paymentStatus.currency }}"
+                data-base-costs="{{ object.paymentStatus.costs }}"
+        >
+            {{ currency(object.paymentStatus.currency) }} {{ object.paymentStatus.costs }}
+        </button>
         <div class="btn-group" role="group">
             <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ object.paymentStatus.paymentStatus }}
@@ -124,8 +131,10 @@
             <div class="dropdown-menu js-payment-status" data-entity="{{ entity }}" data-id="{{ object.id }}" aria-labelledby="btnGroupDrop1">
                 <a class="dropdown-item js-payment-status-item" href="#">Booked CC 4086</a>
                 <a class="dropdown-item js-payment-status-item" href="#">Booked CC 7501</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Booked PPCC</a>
                 <a class="dropdown-item js-payment-status-item" href="#">Charged CC 4086</a>
                 <a class="dropdown-item js-payment-status-item" href="#">Charged CC 7501</a>
+                <a class="dropdown-item js-payment-status-item" href="#">Charged PPCC</a>
                 <a class="dropdown-item js-payment-status-item" href="#">Completed</a>
                 <a class="dropdown-item js-payment-status-item" href="#">To be paid cash</a>
                 <a class="dropdown-item js-payment-status-item" href="#">To be paid CC</a>
@@ -143,6 +152,7 @@
            href="{{ documentLink(document.description, entity, object.id, document.documentPath) }}">
             {{ document.description }}
         </a>
+        <br>
     {% endfor %}
 
 {% endmacro %}

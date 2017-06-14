@@ -33,6 +33,11 @@ class PaymentStatus
     /**
      * @ORM\Column(type="string")
      */
+    private $currency;
+
+    /**
+     * @ORM\Column(type="string")
+     */
     private $paymentStatus;
 
     /**
@@ -90,6 +95,22 @@ class PaymentStatus
     public function setCosts($costs)
     {
         $this->costs = $costs;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param mixed $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
     }
 
     /**

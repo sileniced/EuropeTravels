@@ -38,7 +38,7 @@ class Payment
     /**
      * @ORM\OneToMany(
      *     targetEntity="AppBundle\Entity\Document",
-     *     mappedBy="attraction",
+     *     mappedBy="payment",
      *     orphanRemoval=true,
      *     cascade={"persist"}
      * )

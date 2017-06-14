@@ -52,20 +52,97 @@
 
 
         <div class="js-menu-item-wrapper blue">
-            <h2 class="display-4 js-menu-item">docs.payments</h2>
+            <h2 class="display-4 js-menu-item">documents</h2>
+            <div style="display:none;">
+                <p class="col-1 lead js-form-menu-item">add</p>
+                <div class="js-item card-block">
+                    <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
+                        {% include ':forms:document.html.twig' %}
+                    </div>
+                    {% for document in documents %}
+                        {{ macros.document(document) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="js-menu-item-wrapper green">
+            <h2 class="display-4 js-menu-item">payments</h2>
+            <div  style="display:none;">
+                <p class="col-1 lead js-form-menu-item">add</p>
+                <div class="js-item card-block">
+                    <div data-url="{{ path('payment') }}" class="js-form-item" style="display:none;">
+                        {% include ':forms:payment.html.twig' %}
+                    </div>
+
+
+                    {% set total = 0 %}
+                    {% set paymentStatusTitle = '' %}
+
+                    {% for payment in paymentStatus %}
+
+                    {% if loop.first %}
+                    {% set paymentStatusTitle = payment.paymentStatus %}
+                    <div class="card">
+                        <p style="text-align: center;">{{ paymentStatusTitle }}</p>
+                    </div>
+                    <table class="col-12" border="1">
+                        <tbody>
+                        {% endif %}
+                        {% if payment.paymentStatus != paymentStatusTitle %}
+                        {% set paymentStatusTitle = payment.paymentStatus %}
+                        <tr>
+                            <td><b><i>total:</i></b></td>
+                            <td>€ {{ total }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {% set total = 0 %}
+                    <div class="card">
+                        <p style="text-align: center;">{{ paymentStatusTitle }}</p>
+                    </div>
+
+                    <table class="col-12" border="1">
+                        <tbody>
+                        {% endif %}
+                        {% set total = total + payment.costs %}
+                        {{ macros.paymentStatusList(payment) }}
+                        {% endfor %}
+                        <tr>
+                            <td><b><i>total:</i></b></td>
+                            <td>€{{ total }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="js-menu-item-wrapper brown">
+            <h2 class="display-4 js-menu-item">budget</h2>
+            <div  style="display:none;">
+
+            </div>
+        </div>
+
+
+        <div class="js-menu-item-wrapper red">
+            <h2 class="display-4 js-menu-item">collection</h2>
             <div style="display:none;">
 
 
                 <div class="js-menu-item-wrapper">
-                    <h2 class="display-4 js-menu-item">documents</h2>
+                    <h2 class="display-4 js-menu-item">transport</h2>
                     <div style="display:none;">
                         <p class="col-1 lead js-form-menu-item">add</p>
                         <div class="js-item card-block">
-                            <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
-                                {% include ':forms:document.html.twig' %}
+                            <div data-url="{{ path('new', {'_object': 'Transport'}) }}" class="js-form-item" style="display:none;">
+                                {% include ':forms:transport.html.twig' %}
                             </div>
-                            {% for document in documents %}
-                                {{ macros.document(document) }}
+                            {% for transport in transports %}
+                                {{ macros.transport(transport) }}
                             {% endfor %}
                         </div>
                     </div>
@@ -73,106 +150,37 @@
 
 
                 <div class="js-menu-item-wrapper">
-                    <h2 class="display-4 js-menu-item">payments</h2>
-                    <div>
+                    <h2 class="display-4 js-menu-item">hotels</h2>
+                    <div style="display:none;">
                         <p class="col-1 lead js-form-menu-item">add</p>
                         <div class="js-item card-block">
-                            <div data-url="{{ path('payment') }}" class="js-form-item" style="display:none;">
-                                {% include ':forms:payment.html.twig' %}
+                            <div data-url="{{ path('new', {'_object': 'Hotel'}) }}" class="js-form-item" style="display:none;">
+                                {% include ':forms:hotel.html.twig' %}
                             </div>
-
-
-                            {% set total = 0 %}
-                            {% set paymentStatusTitle = '' %}
-
-                            {% for payment in paymentStatus %}
-
-                            {% if loop.first %}
-                            {% set paymentStatusTitle = payment.paymentStatus %}
-                            <div class="card">
-                                <p style="text-align: center;">{{ paymentStatusTitle }}</p>
-                            </div>
-                            <table class="col-12" border="1">
-                                <tbody>
-                                {% endif %}
-                                {% if payment.paymentStatus != paymentStatusTitle %}
-                                {% set paymentStatusTitle = payment.paymentStatus %}
-                                <tr>
-                                    <td><b><i>total:</i></b></td>
-                                    <td>€ {{ total }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            {% set total = 0 %}
-                            <div class="card">
-                                <p style="text-align: center;">{{ paymentStatusTitle }}</p>
-                            </div>
-
-                            <table class="col-12" border="1">
-                                <tbody>
-                                {% endif %}
-                                {% set total = total + payment.costs %}
-                                {{ macros.paymentStatusList(payment) }}
-                                {% endfor %}
-                                <tr>
-                                    <td><b><i>total:</i></b></td>
-                                    <td>€{{ total }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            {% for hotel in hotels %}
+                                {{ macros.hotel(hotel) }}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
 
 
-            </div>
-        </div>
-
-
-        <div class="js-menu-item-wrapper green">
-            <h2 class="display-4 js-menu-item">transport</h2>
-            <div style="display:none;">
-                <p class="col-1 lead js-form-menu-item">add</p>
-                <div class="js-item card-block">
-                    <div data-url="{{ path('new', {'_object': 'Transport'}) }}" class="js-form-item" style="display:none;">
-                        {% include ':forms:transport.html.twig' %}
+                <div class="js-menu-item-wrapper">
+                    <h2 class="display-4 js-menu-item">attractions</h2>
+                    <div style="display:none;">
+                        <p class="col-1 lead js-form-menu-item">add</p>
+                        <div class="js-item card-block">
+                            <div data-url="{{ path('new', {'_object': 'Attraction'}) }}" class="js-form-item" style="display:none;">
+                                {% include ':forms:attraction.html.twig' %}
+                            </div>
+                            {% for attraction in attractions %}
+                                {{ macros.attraction(attraction) }}
+                            {% endfor %}
+                        </div>
                     </div>
-                    {% for transport in transports %}
-                        {{ macros.transport(transport) }}
-                    {% endfor %}
                 </div>
-            </div>
-        </div>
 
 
-        <div class="js-menu-item-wrapper brown">
-            <h2 class="display-4 js-menu-item">hotels</h2>
-            <div style="display:none;">
-                <p class="col-1 lead js-form-menu-item">add</p>
-                <div class="js-item card-block">
-                    <div data-url="{{ path('new', {'_object': 'Hotel'}) }}" class="js-form-item" style="display:none;">
-                        {% include ':forms:hotel.html.twig' %}
-                    </div>
-                    {% for hotel in hotels %}
-                        {{ macros.hotel(hotel) }}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-
-        <div class="js-menu-item-wrapper red">
-            <h2 class="display-4 js-menu-item">attractions</h2>
-            <div style="display:none;">
-                <p class="col-1 lead js-form-menu-item">add</p>
-                <div class="js-item card-block">
-                    <div data-url="{{ path('new', {'_object': 'Attraction'}) }}" class="js-form-item" style="display:none;">
-                        {% include ':forms:attraction.html.twig' %}
-                    </div>
-                    {% for attraction in attractions %}
-                        {{ macros.attraction(attraction) }}
-                    {% endfor %}
-                </div>
             </div>
         </div>
 
@@ -203,6 +211,30 @@
         <script>
             var EuropeTravelsApp = {
                 initialize: function ($wrapper) {
+
+                    $.ajax({
+                        url: 'http://api.fixer.io/latest?symbols=IDR',
+                        success: function (data) {
+                            EuropeTravelsApp.euridr = data.rates.IDR;
+                        }
+                    });
+
+                    $.ajax({
+                        url: 'http://api.fixer.io/latest?base=GBP&symbols=IDR,EUR',
+                        success: function (data) {
+                            EuropeTravelsApp.gbpidr = data.rates.IDR;
+                            EuropeTravelsApp.gbpeur = data.rates.EUR;
+                        }
+                    });
+
+                    $.ajax({
+                        url: 'http://api.fixer.io/latest?base=CZK&symbols=IDR,EUR',
+                        success: function (data) {
+                            EuropeTravelsApp.czkidr = data.rates.IDR;
+                            EuropeTravelsApp.czkeur = data.rates.EUR;
+                        }
+                    });
+
                     this.$wrapper = $wrapper;
 
                     this.$wrapper.find('.js-menu-item').on(
@@ -283,6 +315,7 @@
                         contentType: false,
                         cache: false,
                         success: function (response) {
+                            console.log('test');
                             addNewApp.handleFormSuccess({
                                 'form': $(this).serializeArray(),
                                 'data': response
@@ -301,20 +334,53 @@
 
                 handleCostsClick: function () {
                     var self = $(this);
-                    var costs = self.text().match(/\d+/)[0];
-                    var currency = self.data('currency');
+                    var costs = self.data('base-costs');
+                    var baseCurrency = self.data('base-currency');
+                    var showCurrency = self.data('show-currency');
 
-                    if (currency === 'EUR') {
-                        $.ajax({
-                            url: 'http://api.fixer.io/latest?symbols=IDR',
-                            success: function (data) {
-                                self.text('IDR ' + (costs * data.rates.IDR).toLocaleString());
-                                self.data('currency', costs);
+                    switch (baseCurrency) {
+                        case 'EUR':
+                            if (showCurrency === 'EUR') {
+                                self.text('IDR ' + (costs * EuropeTravelsApp.euridr).toLocaleString());
+                                self.data('show-currency', 'IDR');
+                            } else {
+                                self.text('€ ' + costs);
+                                self.data('show-currency', 'EUR');
                             }
-                        })
-                    } else {
-                        self.text('€ ' + (self.data('currency').toLocaleString()));
-                        self.data('currency', 'EUR');
+                            break;
+                        case 'GBP':
+                            if (showCurrency === 'GBP') {
+                                self.text('IDR ' + (costs * EuropeTravelsApp.gbpidr).toLocaleString());
+                                self.data('show-currency', 'IDR');
+                            } else if (showCurrency === 'IDR') {
+                                self.text('€ ' + (costs * EuropeTravelsApp.gbpeur).toLocaleString());
+                                self.data('show-currency', 'EUR');
+                            } else {
+                                self.text('£ ' + costs);
+                                self.data('show-currency', 'GBP');
+                            }
+                            break;
+                        case 'CZK':
+                            if (showCurrency === 'CZK') {
+                                self.text('IDR ' + (costs * EuropeTravelsApp.czkidr).toLocaleString());
+                                self.data('show-currency', 'IDR');
+                            } else if (showCurrency === 'IDR') {
+                                self.text('€ ' + (costs * EuropeTravelsApp.czkeur).toLocaleString());
+                                self.data('show-currency', 'EUR');
+                            } else {
+                                self.text('SZK ' + costs);
+                                self.data('show-currency', 'CZK');
+                            }
+                            break;
+                        default:
+                            if (showCurrency === 'IDR') {
+                                self.text('€ ' + (costs / EuropeTravelsApp.euridr).toLocaleString());
+                                self.data('show-currency', 'EUR');
+                            } else {
+                                self.text('IDR ' + costs);
+                                self.data('show-currency', 'IDR');
+                            }
+                            break;
                     }
                 },
 

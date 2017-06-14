@@ -58,7 +58,7 @@ class Transport
     /**
      * @ORM\OneToMany(
      *     targetEntity="AppBundle\Entity\Document",
-     *     mappedBy="attraction",
+     *     mappedBy="transport",
      *     orphanRemoval=true,
      *     cascade={"persist"}
      * )
@@ -92,6 +92,14 @@ class Transport
             $this->documents->removeElement($document);
             $document->setTransport(null);
         }
+    }
+
+    /**
+     * @param mixed $documents
+     */
+    public function setDocuments(Document $documents)
+    {
+        $this->documents = $documents;
     }
 
     /**

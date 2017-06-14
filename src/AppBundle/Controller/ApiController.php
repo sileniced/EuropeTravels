@@ -75,31 +75,15 @@ class ApiController extends Controller
         if ($form->isValid()) {
             $object = $form->getData();
 
-            $document = [];
-//            for ($i = 1; $i <= 3; $i++) {
-//                $getDocument = 'getDocument' . $i;
-//                $setDocumentPath = 'setDocumentPath' . $i;
-//                $getDocumentDescription = 'getDocumentDescription' . $i;
-//
-//                if ($object->$getDocument()) {
-//                    $hash = $this->documentUploader($object->$getDocument());
-//                    $object->$setDocumentPath($hash);
-//                    $document[$i] = [
-//                        'description' => $object->$getDocumentDescription(),
-//                        'hash' => $hash
-//                    ];
-//                }
-//            }
+            foreach ($object->getDocuments() as $document) {
+                $hash = $this->documentUploader($document->getDocument());
+                $document->setDocumentPath($hash);
+            }
 
             $em->persist($object);
             $em->flush();
 
-            $data = [
-                'form' => 'transport',
-                'documents' => $document
-            ];
-
-            return new JsonResponse($data);
+            return new Response(null, 204);
         }
 
         return new Response(null, 500);

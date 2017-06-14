@@ -7,11 +7,11 @@
 {{ form_row(objForm.itinerary) }}
 {{ form_row(objForm.paymentStatus) }}
 <div class="js-document-wrapper"
-     data-prototype="{{ macros.embeddedDocument(objForm.documents.vars.prototype) | e('html_attr') }}"
+     data-prototype="{{ macros.formDocument(objForm.documents.vars.prototype) | e('html_attr') }}"
      data-index="{{ objForm.documents | length }}"
 >
     {% for documentForm in objForm.documents %}
-        {{ macros.embeddedDocument(documentForm) }}
+        {{ macros.formDocument(documentForm) }}
     {% endfor %}
     <a href="#" class="js-document-add">
         Add another document
