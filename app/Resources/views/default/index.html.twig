@@ -3,6 +3,10 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
+        .js-form-item {
+            padding-bottom: 40px;
+        }
+
         .js-menu-item-wrapper {
             box-shadow: 0 -1px 5px 0;
         }
@@ -21,6 +25,16 @@
 
         .js-document-wrapper {
             margin-bottom: 30px;
+        }
+
+        .js-payment-status-list-item,
+        .js-payment-status-total {
+            text-align: right;
+        }
+
+        .js-payment-status-total {
+            font-weight: bold;
+            font-style: italic;
         }
 
         .blue {
@@ -75,46 +89,34 @@
                     <div data-url="{{ path('payment') }}" class="js-form-item" style="display:none;">
                         {% include ':forms:payment.html.twig' %}
                     </div>
-
-
-                    {% set total = 0 %}
-                    {% set paymentStatusTitle = '' %}
-
-                    {% for payment in paymentStatus %}
-
-                    {% if loop.first %}
-                    {% set paymentStatusTitle = payment.paymentStatus %}
-                    <div class="card">
-                        <p style="text-align: center;">{{ paymentStatusTitle }}</p>
-                    </div>
-                    <table class="col-12" border="1">
-                        <tbody>
-                        {% endif %}
-                        {% if payment.paymentStatus != paymentStatusTitle %}
-                        {% set paymentStatusTitle = payment.paymentStatus %}
-                        <tr>
-                            <td><b><i>total:</i></b></td>
-                            <td>€ {{ total }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    {% set total = 0 %}
-                    <div class="card">
-                        <p style="text-align: center;">{{ paymentStatusTitle }}</p>
-                    </div>
-
-                    <table class="col-12" border="1">
-                        <tbody>
-                        {% endif %}
-                        {% set total = total + payment.costs %}
-                        {{ macros.paymentStatusList(payment) }}
+                    <div class="js-payment-status-wrapper">
+                        <div class="btn-group btn-group-lg js-payment-status-buttons-wrapper" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-secondary col-sm-4">Base</button>
+                            <button type="button" class="btn btn-secondary col-sm-4">IDR</button>
+                            <button type="button" class="btn btn-secondary col-sm-4">EUR</button>
+                        </div>
+                        {% for paymentBlock in paymentStatus %}
+                            <div class="card">
+                                <p style="text-align: center; font-weight: bolder;">{{ paymentBlock['title'] }}</p>
+                            </div>
+                            <table class="col-12" border="1">
+                                <tbody>
+                                {% for payment in paymentBlock['PaymentStatus'] %}
+                                    {{ macros.paymentStatusList(payment) }}
+                                {% endfor %}
+                                <tr>
+                                    <td><b><i>total:</i></b></td>
+                                    <td class="js-payment-status-total"
+                                        data-total-idr="IDR {{ paymentBlock['total']['IDR'] }}"
+                                        data-total-eur="€ {{ paymentBlock['total']['EUR'] }}"
+                                    >
+                                        IDR {{ paymentBlock['total']['IDR'] }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         {% endfor %}
-                        <tr>
-                            <td><b><i>total:</i></b></td>
-                            <td>€{{ total }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,28 +214,11 @@
             var EuropeTravelsApp = {
                 initialize: function ($wrapper) {
 
-                    $.ajax({
-                        url: 'http://api.fixer.io/latest?symbols=IDR',
-                        success: function (data) {
-                            EuropeTravelsApp.euridr = data.rates.IDR;
-                        }
-                    });
-
-                    $.ajax({
-                        url: 'http://api.fixer.io/latest?base=GBP&symbols=IDR,EUR',
-                        success: function (data) {
-                            EuropeTravelsApp.gbpidr = data.rates.IDR;
-                            EuropeTravelsApp.gbpeur = data.rates.EUR;
-                        }
-                    });
-
-                    $.ajax({
-                        url: 'http://api.fixer.io/latest?base=CZK&symbols=IDR,EUR',
-                        success: function (data) {
-                            EuropeTravelsApp.czkidr = data.rates.IDR;
-                            EuropeTravelsApp.czkeur = data.rates.EUR;
-                        }
-                    });
+                    this.euridr = {{ fixer.EURIDR }};
+                    this.gbpidr = {{ fixer.GBPIDR }};
+                    this.gbpeur = {{ fixer.GBPEUR }};
+                    this.czkidr = {{ fixer.CZKIDR }};
+                    this.czkeur = {{ fixer.CZKEUR }};
 
                     this.$wrapper = $wrapper;
 
@@ -286,7 +271,46 @@
                     this.$wrapper.find('.js-document-add').on(
                         'click',
                         this.handleFormDocumentAdd
-                    )
+                    );
+
+                    this.$wrapper.find('.js-payment-status-buttons-wrapper').find('button').on(
+                        'click',
+                        this.handlePaymentChange
+                    );
+                },
+
+                handlePaymentChange: function(e) {
+
+                    var $wrapper = $('.js-payment-status-wrapper');
+                    switch (e.currentTarget.innerText) {
+                        case 'Base':
+                            $wrapper.find('.js-payment-status-list-item').each(function () {
+                                    $(this).text($(this).data('costs-base'))
+                                }
+                            );
+                            break;
+                        case 'IDR':
+                            $wrapper.find('.js-payment-status-list-item').each(function () {
+                                    $(this).text($(this).data('costs-idr'));
+                                }
+                            );
+                            $wrapper.find('.js-payment-status-total').each(function () {
+                                    $(this).text($(this).data('total-idr'))
+                                }
+                            );
+                            break;
+                        case 'EUR':
+                            $wrapper.find('.js-payment-status-list-item').each(function () {
+                                    $(this).text($(this).data('costs-eur'))
+                                }
+                            );
+                            $wrapper.find('.js-payment-status-total').each(function () {
+                                    $(this).text($(this).data('total-eur'))
+                                }
+                            );
+                            break;
+
+                    }
                 },
 
                 handleMenuItemClick: function () {
@@ -368,7 +392,7 @@
                                 self.text('€ ' + (costs * EuropeTravelsApp.czkeur).toLocaleString());
                                 self.data('show-currency', 'EUR');
                             } else {
-                                self.text('SZK ' + costs);
+                                self.text('CZK ' + costs);
                                 self.data('show-currency', 'CZK');
                             }
                             break;
