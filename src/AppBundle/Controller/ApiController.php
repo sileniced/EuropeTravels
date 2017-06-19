@@ -26,32 +26,21 @@ class ApiController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/new/payment", name="payment")
-     * @Method("POST")
-     * @return Response
-     */
-    public function NewPaymentAction(Request $request)
-    {
-        $form = $this->createForm('AppBundle\Form\PaymentFormType')->handleRequest($request);
-        if ($form->isValid()) {
-
-            return new Response('payment', 200);
-        }
-
-        return new Response(null, 500);
-    }
-
-    /**
-     * @param Request $request
      * @Route("/new/document", name="document")
      * @Method("POST")
      * @return Response
      */
     public function NewDocumentAction(Request $request)
     {
-        $form = $this->createForm('AppBundle\Form\DocumentFormType')->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm('AppBundle\Form\DocumentEmbeddedForm')->handleRequest($request);
         if ($form->isValid()) {
+            $object = $form->getData();
 
+            $object->setDocumentPath($this->documentUploader($object->getDocument()));
+
+            $em->persist($object);
+            $em->flush();
             return new Response('document', 200);
         }
 
@@ -73,8 +62,7 @@ class ApiController extends Controller
             $object = $form->getData();
 
             foreach ($object->getDocuments() as $document) {
-                $hash = $this->documentUploader($document->getDocument());
-                $document->setDocumentPath($hash);
+                $document->setDocumentPath($this->documentUploader($document->getDocument()));
             }
 
             $em->persist($object);

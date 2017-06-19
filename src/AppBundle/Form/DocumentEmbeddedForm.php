@@ -21,10 +21,7 @@ class DocumentEmbeddedForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Document::class,
-            'attr' => [
-                'data-url' => 'api/document'
-            ]
+            'data_class' => Document::class
         ]);
     }
 }

@@ -43,6 +43,18 @@
     <hr>
 {% endmacro %}
 
+{% macro payment(payment) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ payment.description }}</h4>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ attraction.address }}">{{ attraction.address }}</a></h6>
+        {{ macros.paymentStatus(attraction.paymentStatus, parent) }}<br>
+        {{ macros.objectDocuments(attraction, 'Payment') }}
+    </div>
+    <hr>
+{% endmacro %}
+
 {% macro itinerary(object) %}{% import _self as macros %}
     <div class="js-item-title">
         <h3 class="display-4">{{ object.entity }}</h3>
@@ -96,8 +108,26 @@
     </tr>
 {% endmacro %}
 
-{% macro document() %}
-
+{% macro document(object) %}
+    <a target="_blank"
+       class="col-sm-12 btn btn-secondary"
+       role="button"
+       href="{{ documentLink(document.description, entity, object.id, document.documentPath) }}"
+    >
+        {% if payment.entity == 'Transport' %}
+            {{ payment.transport.description }}
+        {% elseif payment.entity == 'Hotel' %}
+            {{ payment.hotel.name }}
+        {% elseif payment.entity == 'Attraction' %}
+            {{ payment.attraction.description }}
+        {% elseif payment.entity == 'Payment' %}
+            {{ payment.payment.description }}
+        {% else %}
+            Document
+        {% endif %}
+         - {{ document.description }}
+    </a>
+    <br>
 {% endmacro %}
 
 {% macro formDocument(documentForm) %}
@@ -110,10 +140,6 @@
             </div>
         </div>
     </div>
-{% endmacro %}
-
-{% macro payment() %}
-
 {% endmacro %}
 
 {% macro itineraryPiece(itinerary) %}

@@ -73,9 +73,11 @@
                     <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
                         {% include ':forms:document.html.twig' %}
                     </div>
-                    {% for document in documents %}
-                        {{ macros.document(document) }}
-                    {% endfor %}
+                    <div class="js-document-wrapper">
+                        {% for document in documents %}
+                            {{ macros.document(document) }}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,7 +88,7 @@
             <div  style="display:none;">
                 <p class="col-1 lead js-form-menu-item">add</p>
                 <div class="js-item card-block">
-                    <div data-url="{{ path('payment') }}" class="js-form-item" style="display:none;">
+                    <div data-url="{{ path('new', {'_object': 'Payment'}) }}" class="js-form-item" style="display:none;">
                         {% include ':forms:payment.html.twig' %}
                     </div>
                     <div class="js-payment-status-wrapper">
@@ -128,6 +130,7 @@
             <h2 class="display-4 js-menu-item">budget</h2>
             <div  style="display:none;">
 
+
             </div>
         </div>
 
@@ -145,9 +148,11 @@
                             <div data-url="{{ path('new', {'_object': 'Transport'}) }}" class="js-form-item" style="display:none;">
                                 {% include ':forms:transport.html.twig' %}
                             </div>
-                            {% for transport in transports %}
-                                {{ macros.transport(transport, 'Collection') }}
-                            {% endfor %}
+                            <div class="js-transport-wrapper">
+                                {% for transport in transports %}
+                                    {{ macros.transport(transport, 'Collection') }}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -161,9 +166,11 @@
                             <div data-url="{{ path('new', {'_object': 'Hotel'}) }}" class="js-form-item" style="display:none;">
                                 {% include ':forms:hotel.html.twig' %}
                             </div>
-                            {% for hotel in hotels %}
-                                {{ macros.hotel(hotel, 'Collection') }}
-                            {% endfor %}
+                            <div class="js-hotel-wrapper">
+                                {% for hotel in hotels %}
+                                    {{ macros.hotel(hotel, 'Collection') }}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,9 +184,11 @@
                             <div data-url="{{ path('new', {'_object': 'Attraction'}) }}" class="js-form-item" style="display:none;">
                                 {% include ':forms:attraction.html.twig' %}
                             </div>
-                            {% for attraction in attractions %}
-                                {{ macros.attraction(attraction, 'Collection') }}
-                            {% endfor %}
+                            <div class="js-attraction-wrapper">
+                                {% for attraction in attractions %}
+                                    {{ macros.attraction(attraction, 'Collection') }}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -211,22 +220,22 @@
     {% block javascripts %}
         {{ parent() }}
         <script>
+            var variables = {
+                'changes': {
+                    'paymentStatusList': false,
+                    'itinerary': false
+                },
+                'rates': {
+                    'euridr': {{ fixer.EURIDR }},
+                    'gbpidr': {{ fixer.GBPIDR }},
+                    'gbpeur': {{ fixer.GBPEUR }},
+                    'czkidr': {{ fixer.CZKIDR }},
+                    'czkeur': {{ fixer.CZKEUR }}
+                }
+            };
+
             var EuropeTravelsApp = {
                 initialize: function ($wrapper) {
-
-                    this.changes = {
-                        'paymentStatusList': false,
-                        'itinerary': false
-                    };
-
-                    this.rates = {
-                        'euridr': {{ fixer.EURIDR }},
-                        'gbpidr': {{ fixer.GBPIDR }},
-                        'gbpeur': {{ fixer.GBPEUR }},
-                        'czkidr': {{ fixer.CZKIDR }},
-                        'czkeur': {{ fixer.CZKEUR }}
-                    };
-
                     this.$wrapper = $wrapper;
 
                     this.$wrapper.find('.js-menu-item').on(
@@ -327,9 +336,9 @@
 
                 handleMenuItemClick: function (e) {
 
-                    if (e.currentTarget.innerText === 'payments' && EuropeTravelsApp.changes.paymentStatusList === true) {
+                    if (e.currentTarget.innerText === 'payments' && variables.changes.paymentStatusList === true) {
                         RenewApp.paymentStatusList();
-                    } else if (e.currentTarget.innerText === 'itinerary' && EuropeTravelsApp.changes.itinerary === true) {
+                    } else if (e.currentTarget.innerText === 'itinerary' && variables.changes.itinerary === true) {
                         RenewApp.itinerary();
                     }
 
@@ -358,26 +367,7 @@
                         contentType: false,
                         cache: false,
                         success: function (object) {
-                            switch (object) {
-                                case 'Transport':
-                                    RenewApp.transport();
-                                    EuropeTravelsApp.changes.itinerary = true;
-                                    break;
-                                case 'Hotel':
-                                    RenewApp.hotel();
-                                    EuropeTravelsApp.changes.itinerary = true;
-                                    break;
-                                case 'Attraction':
-                                    RenewApp.attraction();
-                                    EuropeTravelsApp.changes.itinerary = true;
-                                    break;
-                                case 'prepayment':
-                                    RenewApp.paymentStatusList();
-                                    break;
-                                case 'document':
-                                    RenewApp.documentList();
-                                    break;
-                            }
+                            RenewApp.switcher(object.toLowerCase())
                         }
                     })
                 },
@@ -393,51 +383,47 @@
                 handleCostsClick: function () {
                     var self = $(this);
                     var costs = self.data('base-costs');
-                    var baseCurrency = self.data('base-currency');
-                    var showCurrency = self.data('show-currency');
 
-                    switch (baseCurrency) {
-                        case 'EUR':
-                            if (showCurrency === 'EUR') {
-                                self.text('IDR ' + (costs * EuropeTravelsApp.rates.euridr).toLocaleString());
-                                self.data('show-currency', 'IDR');
-                            } else {
-                                self.text('€ ' + costs);
-                                self.data('show-currency', 'EUR');
-                            }
+                    switch (self.data('base-currency') + self.data('show-currency')) {
+                        case 'EUREUR':
+                            self.text('IDR ' + (costs * variables.rates.euridr).toLocaleString());
+                            self.data('show-currency', 'IDR');
                             break;
-                        case 'GBP':
-                            if (showCurrency === 'GBP') {
-                                self.text('IDR ' + (costs * EuropeTravelsApp.rates.gbpidr).toLocaleString());
-                                self.data('show-currency', 'IDR');
-                            } else if (showCurrency === 'IDR') {
-                                self.text('€ ' + (costs * EuropeTravelsApp.rates.gbpeur).toLocaleString());
-                                self.data('show-currency', 'EUR');
-                            } else {
-                                self.text('£ ' + costs);
-                                self.data('show-currency', 'GBP');
-                            }
+                        case 'EURIDR':
+                            self.text('€ ' + costs);
+                            self.data('show-currency', 'EUR');
                             break;
-                        case 'CZK':
-                            if (showCurrency === 'CZK') {
-                                self.text('IDR ' + (costs * EuropeTravelsApp.rates.czkidr).toLocaleString());
-                                self.data('show-currency', 'IDR');
-                            } else if (showCurrency === 'IDR') {
-                                self.text('€ ' + (costs * EuropeTravelsApp.rates.czkeur).toLocaleString());
-                                self.data('show-currency', 'EUR');
-                            } else {
-                                self.text('CZK ' + costs);
-                                self.data('show-currency', 'CZK');
-                            }
+                        case 'GBPGBP':
+                            self.text('IDR ' + (costs * variables.rates.gbpidr).toLocaleString());
+                            self.data('show-currency', 'IDR');
                             break;
-                        default:
-                            if (showCurrency === 'IDR') {
-                                self.text('€ ' + (costs / EuropeTravelsApp.rates.euridr).toLocaleString());
-                                self.data('show-currency', 'EUR');
-                            } else {
-                                self.text('IDR ' + costs);
-                                self.data('show-currency', 'IDR');
-                            }
+                        case 'GBPIDR':
+                            self.text('€ ' + (costs * variables.rates.gbpeur).toLocaleString());
+                            self.data('show-currency', 'EUR');
+                            break;
+                        case 'GBPEUR':
+                            self.text('£ ' + costs);
+                            self.data('show-currency', 'GBP');
+                            break;
+                        case 'CZKCZK':
+                            self.text('IDR ' + (costs * variables.rates.czkidr).toLocaleString());
+                            self.data('show-currency', 'IDR');
+                            break;
+                        case 'CZKIDR':
+                            self.text('€ ' + (costs * variables.rates.czkeur).toLocaleString());
+                            self.data('show-currency', 'EUR');
+                            break;
+                        case 'CZKEUR':
+                            self.text('CZK ' + costs);
+                            self.data('show-currency', 'CZK');
+                            break;
+                        case 'IDRIDR':
+                            self.text('€ ' + (costs / variables.rates.euridr).toLocaleString());
+                            self.data('show-currency', 'EUR');
+                            break;
+                        case 'IDREUR':
+                            self.text('IDR ' + costs);
+                            self.data('show-currency', 'IDR');
                             break;
                     }
                 },
@@ -462,7 +448,7 @@
                             if ($self.closest('.js-menu-item-wrapper').find('.js-menu-item').text() === 'payments') {
                                 RenewApp.paymentStatusList();
                             } else {
-                                EuropeTravelsApp.changes.paymentStatusList = true;
+                                variables.changes.paymentStatusList = true;
                             }
                         }
                     })
@@ -488,10 +474,52 @@
             };
 
             var RenewApp = {
+                switcher: function(object) {
+                    switch (object) {
+                        case 'transport':
+                        case 'hotel':
+                        case 'attraction':
+                            RenewApp.collection(object);
+                            EuropeTravelsApp.changes.itinerary = true;
+                            break;
+                        case 'payment':
+                            RenewApp.paymentStatusList();
+                            break;
+                        case 'document':
+                            RenewApp.documentList();
+                            break;
+                    }
+                },
+
+                collection: function (entity) {
+                    $.ajax({
+                        url: "/api/renew/" + entity,
+                        success: function (response) {
+                            var $wrapper = EuropeTravelsApp.$wrapper.find('.js-' + entity + '-wrapper');
+                            $wrapper.html(response);
+
+                            $wrapper.find('.js-item-card-title').on(
+                                'click',
+                                EuropeTravelsApp.handleCardTitleClick
+                            );
+
+                            $wrapper.find('.js-payment-status-item').on(
+                                'click',
+                                EuropeTravelsApp.handlePaymentStatusChange
+                            );
+
+                            $wrapper.find('.js-costs').on(
+                                'click',
+                                EuropeTravelsApp.handleCostsClick
+                            );
+
+                        }
+                    })
+                },
+
                 paymentStatusList: function() {
                     $.ajax({
                         url: "/api/renew/payment",
-                        method: "GET",
                         success: function (response) {
                             var $wrapper = EuropeTravelsApp.$wrapper.find('.js-payment-status-list-wrapper');
                             $wrapper.html(response);
@@ -516,7 +544,7 @@
                                 EuropeTravelsApp.handleCostsClick
                             );
 
-                            EuropeTravelsApp.changes.paymentStatusList = false;
+                            variables.changes.paymentStatusList = false;
                         }
                     })
                 },
@@ -524,7 +552,6 @@
                 itinerary: function() {
                     $.ajax({
                         url: "/api/renew/itinerary",
-                        method: "GET",
                         success: function (response) {
                             var $wrapper = EuropeTravelsApp.$wrapper.find('.js-itinerary-wrapper');
                             $wrapper.html(response);
@@ -544,7 +571,16 @@
                                 EuropeTravelsApp.handleCostsClick
                             );
 
-                            EuropeTravelsApp.changes.paymentStatusList = false;
+                            variables.changes.paymentStatusList = false;
+                        }
+                    })
+                },
+
+                documentList: function () {
+                    $.ajax({
+                        url: "api/renew/document",
+                        success: function (response) {
+                            EuropeTravelsApp.$wrapper.find('.js-document-wrapper').html(response);
                         }
                     })
                 }

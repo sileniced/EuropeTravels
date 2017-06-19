@@ -22,6 +22,8 @@ class RenewController extends Controller
 {
     /**
      * @Route("/{list}")
+     * @param $list
+     * @return Response
      */
     public function RenewAction($list)
     {
@@ -34,10 +36,25 @@ class RenewController extends Controller
                 ]), 200);
             case 'itinerary':
                 return new Response($this->renderView('renew/itineraryList.html.twig', [
+                    'itinerary' => $em->getRepository('AppBundle:Itinerary')->findAllOrderedByStartsAt()
+                ]), 200);
+            case 'transport':
+                return new Response($this->renderView('renew/transportList.html.twig', [
+                    'transports' => $em->getRepository('AppBundle:Transport')->findAllOrderedByStartsAt()
+                ]), 200);
+            case 'hotel':
+                return new Response($this->renderView('renew/hotelList.html.twig', [
+                    'hotels' => $em->getRepository('AppBundle:Hotel')->findAllOrderedByStartsAt(),
+                ]), 200);
+            case 'attraction':
+                return new Response($this->renderView('renew/attractionList.html.twig', [
+                    'attractions' =>    $em->getRepository('AppBundle:Attraction')->findAllOrderedByStartsAt(),
+                ]), 200);
+            case 'document':
+                return new Response($this->renderView('renew/itineraryList.html.twig', [
                     'paymentStatus' => $em->getRepository('AppBundle:Itinerary')
                         ->findAllOrderedByStartsAt()
                 ]), 200);
-
         }
     }
 }
