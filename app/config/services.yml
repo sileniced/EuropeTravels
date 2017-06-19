@@ -16,6 +16,10 @@ services:
         class: AppBundle\Service\hashGenerator
         arguments: ['@doctrine.orm.entity_manager']
 
+    app.generate_payment_status_list:
+        class: AppBundle\Service\generatePaymentStatusList
+        arguments: ['@doctrine.orm.entity_manager', '@buzz']
+
     app.twig_extension:
         class: AppBundle\Twig\AppExtension
         public: false

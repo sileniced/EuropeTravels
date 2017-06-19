@@ -1,0 +1,23 @@
+{% import ':macro:macro.html.twig' as macros %}
+
+{% for paymentBlock in paymentStatus %}
+    <div class="card">
+        <p style="text-align: center; font-weight: bolder;">{{ paymentBlock['title'] }}</p>
+    </div>
+    <table class="col-12" border="1">
+        <tbody>
+        {% for payment in paymentBlock['PaymentStatus'] %}
+            {{ macros.paymentStatusList(payment) }}
+        {% endfor %}
+        <tr>
+            <td><b><i>total:</i></b></td>
+            <td class="js-payment-status-total"
+                data-total-idr="IDR {{ paymentBlock['total']['IDR'] }}"
+                data-total-eur="€ {{ paymentBlock['total']['EUR'] }}"
+            >
+                IDR {{ paymentBlock['total']['IDR'] }}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endfor %}

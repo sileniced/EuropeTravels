@@ -1,4 +1,4 @@
-{% macro transport(transport) %}{% import _self as macros %}
+{% macro transport(transport, parent) %}{% import _self as macros %}
     <div class="js-item-card-title">
         <h4>{{ transport.description }}</h4>
         <h5>{{ transport.category }}</h5>
@@ -7,13 +7,13 @@
         <h6 style="text-align: center;">{{ transport.meansOfTransport | capitalize }}</h6>
         <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ transport.address }}">{{ transport.address }}</a></h6>
         {{ macros.itineraryPiece(transport.itinerary) }}
-        {{ macros.paymentStatus(transport, 'Transport') }}<br>
+        {{ macros.paymentStatus(transport.paymentStatus, parent) }}<br>
         {{ macros.objectDocuments(transport, 'Transport') }}
     </div>
     <hr>
 {% endmacro %}
 
-{% macro hotel(hotel) %}{% import _self as macros %}
+{% macro hotel(hotel, parent) %}{% import _self as macros %}
     <div class="js-item-card-title">
         <h4>{{ hotel.city }}</h4>
         <h5>{{ hotel.name }}</h5>
@@ -22,13 +22,13 @@
         <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ hotel.address }}">{{ hotel.address }}</a></h6>
         {{ macros.itineraryPiece(hotel.itinerary) }}
         <a target="_blank" href="{{ hotel.link }}">website</a><br>
-        {{ macros.paymentStatus(hotel, 'Hotel') }}<br>
+        {{ macros.paymentStatus(hotel.paymentStatus, parent) }}<br>
         {{ macros.objectDocuments(hotel, 'Hotel') }}
     </div>
     <hr>
 {% endmacro %}
 
-{% macro attraction(attraction) %}{% import _self as macros %}
+{% macro attraction(attraction, parent) %}{% import _self as macros %}
     <div class="js-item-card-title">
         <h4>{{ attraction.city }}</h4>
         <h5>{{ attraction.description }}</h5>
@@ -37,7 +37,7 @@
         <h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ attraction.address }}">{{ attraction.address }}</a></h6>
         {{ macros.itineraryPiece(attraction.itinerary) }}
         <a target="_blank" href="{{ attraction.link }}">website</a><br>
-        {{ macros.paymentStatus(attraction, 'Attraction') }}<br>
+        {{ macros.paymentStatus(attraction.paymentStatus, parent) }}<br>
         {{ macros.objectDocuments(attraction, 'Attraction') }}
     </div>
     <hr>
@@ -50,16 +50,16 @@
         <h5>{{ object.endsAt | date('D j-n  G:i') }}</h5>
     </div>
     {% if object.entity == 'Transport' %}
-        {{ macros.transport(object.transport) }}
+        {{ macros.transport(object.transport, 'Itinerary') }}
     {% elseif object.entity == 'Hotel' %}
-        {{ macros.hotel(object.hotel) }}
+        {{ macros.hotel(object.hotel, 'Itinerary') }}
     {% elseif object.entity == 'Attraction' %}
-        {{ macros.attraction(object.attraction) }}
+        {{ macros.attraction(object.attraction, 'Itinerary') }}
     {% endif %}
 {% endmacro %}
 
 {% macro paymentStatusList(payment) %}{% import _self as macros %}
-    <tr class="js-row-title">
+    <tr class="js-payment-status-row">
         <td width="60%">
             {% if payment.entity == 'Transport' %}
                 {{ payment.transport.description }}
@@ -84,13 +84,13 @@
         <td colspan="2">
             <h3 class="display-4" style="text-align: center;">{{ payment.entity }}</h3>
             {% if payment.entity == 'Transport' %}
-                {{ macros.transport(payment.transport) }}
+                {{ macros.transport(payment.transport, 'PaymentStatusList') }}
             {% elseif payment.entity == 'Hotel' %}
-                {{ macros.hotel(payment.hotel) }}
+                {{ macros.hotel(payment.hotel, 'PaymentStatusList') }}
             {% elseif payment.entity == 'Attraction' %}
-                {{ macros.attraction(payment.attraction) }}
+                {{ macros.attraction(payment.attraction, 'PaymentStatusList') }}
             {% elseif payment.entity == 'Payment' %}
-                {{ macros.payment(payment.payment) }}
+                {{ macros.payment(payment.payment, 'PaymentStatusList') }}
             {% endif %}
         </td>
     </tr>
@@ -121,21 +121,21 @@
     To: {{ itinerary.endsAt | date('D j-n  G:i') }}<br><br>
 {% endmacro %}
 
-{% macro paymentStatus(object, entity) %}
+{% macro paymentStatus(object, parent) %}
     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
         <button type="button"
                 class="btn btn-secondary js-costs"
-                data-base-currency="{{ object.paymentStatus.currency }}"
-                data-show-currency="{{ object.paymentStatus.currency }}"
-                data-base-costs="{{ object.paymentStatus.costs }}"
+                data-base-currency="{{ object.currency }}"
+                data-show-currency="{{ object.currency }}"
+                data-base-costs="{{ object.costs }}"
         >
-            {{ currency(object.paymentStatus.currency) }} {{ object.paymentStatus.costs }}
+            {{ currency(object.currency) }} {{ object.costs }}
         </button>
         <div class="btn-group" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ object.paymentStatus.paymentStatus }}
+            <button id="btnGroupDrop{{ parent }}{{ object.id }}" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ object.paymentStatus }}
             </button>
-            <div class="dropdown-menu js-payment-status" data-entity="{{ entity }}" data-id="{{ object.id }}" aria-labelledby="btnGroupDrop1">
+            <div class="dropdown-menu js-payment-status" data-id="{{ object.id }}" aria-labelledby="btnGroupDrop{{ parent }}{{ object .id }}">
                 <a class="dropdown-item js-payment-status-item" href="#">Booked CC 4086</a>
                 <a class="dropdown-item js-payment-status-item" href="#">Booked CC 7501</a>
                 <a class="dropdown-item js-payment-status-item" href="#">Booked PPCC</a>

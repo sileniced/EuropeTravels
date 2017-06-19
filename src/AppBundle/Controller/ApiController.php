@@ -9,13 +9,10 @@
 namespace AppBundle\Controller;
 
 
-use AppBundle\Entity\PaymentStatus;
 use AppBundle\Entity\Hash;
-use AppBundle\Entity\Itinerary;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -83,7 +80,7 @@ class ApiController extends Controller
             $em->persist($object);
             $em->flush();
 
-            return new Response(null, 204);
+            return new Response($_object, 200);
         }
 
         return new Response(null, 500);
@@ -96,14 +93,13 @@ class ApiController extends Controller
      */
     public function paymentStatusChangeAction(Request $request)
     {
-
         $bag = $request->request;
         $em = $this->getDoctrine()->getManager();
 
-        $object = $em->getRepository('AppBundle:' . $bag->get('entity'))
+        $object = $em->getRepository('AppBundle:PaymentStatus')
             ->find($bag->get('id'));
 
-        $object->getPaymentStatus()->setPaymentStatus($bag->get('paymentStatus'));
+        $object->setPaymentStatus($bag->get('paymentStatus'));
 
         $em->merge($object);
         $em->flush();

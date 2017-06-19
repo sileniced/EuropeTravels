@@ -59,7 +59,7 @@
     </style>
 {% endblock %}
 
-{% import ':default:macro.html.twig' as macros %}
+{% import ':macro:macro.html.twig' as macros %}
 
 {% block body %}
     <div class="js-menu">
@@ -95,27 +95,29 @@
                             <button type="button" class="btn btn-secondary col-sm-4">IDR</button>
                             <button type="button" class="btn btn-secondary col-sm-4">EUR</button>
                         </div>
-                        {% for paymentBlock in paymentStatus %}
-                            <div class="card">
-                                <p style="text-align: center; font-weight: bolder;">{{ paymentBlock['title'] }}</p>
-                            </div>
-                            <table class="col-12" border="1">
-                                <tbody>
-                                {% for payment in paymentBlock['PaymentStatus'] %}
-                                    {{ macros.paymentStatusList(payment) }}
-                                {% endfor %}
-                                <tr>
-                                    <td><b><i>total:</i></b></td>
-                                    <td class="js-payment-status-total"
-                                        data-total-idr="IDR {{ paymentBlock['total']['IDR'] }}"
-                                        data-total-eur="€ {{ paymentBlock['total']['EUR'] }}"
-                                    >
-                                        IDR {{ paymentBlock['total']['IDR'] }}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        {% endfor %}
+                        <div class="js-payment-status-list-wrapper">
+                            {% for paymentBlock in paymentStatus %}
+                                <div class="card">
+                                    <p style="text-align: center; font-weight: bolder;">{{ paymentBlock['title'] }}</p>
+                                </div>
+                                <table class="col-12" border="1">
+                                    <tbody>
+                                    {% for payment in paymentBlock['PaymentStatus'] %}
+                                        {{ macros.paymentStatusList(payment) }}
+                                    {% endfor %}
+                                    <tr>
+                                        <td><b><i>total:</i></b></td>
+                                        <td class="js-payment-status-total"
+                                            data-total-idr="IDR {{ paymentBlock['total']['IDR'] }}"
+                                            data-total-eur="€ {{ paymentBlock['total']['EUR'] }}"
+                                        >
+                                            IDR {{ paymentBlock['total']['IDR'] }}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -144,7 +146,7 @@
                                 {% include ':forms:transport.html.twig' %}
                             </div>
                             {% for transport in transports %}
-                                {{ macros.transport(transport) }}
+                                {{ macros.transport(transport, 'Collection') }}
                             {% endfor %}
                         </div>
                     </div>
@@ -160,7 +162,7 @@
                                 {% include ':forms:hotel.html.twig' %}
                             </div>
                             {% for hotel in hotels %}
-                                {{ macros.hotel(hotel) }}
+                                {{ macros.hotel(hotel, 'Collection') }}
                             {% endfor %}
                         </div>
                     </div>
@@ -176,7 +178,7 @@
                                 {% include ':forms:attraction.html.twig' %}
                             </div>
                             {% for attraction in attractions %}
-                                {{ macros.attraction(attraction) }}
+                                {{ macros.attraction(attraction, 'Collection') }}
                             {% endfor %}
                         </div>
                     </div>
@@ -189,18 +191,16 @@
 
         <div class="js-menu-item-wrapper orange">
             <h2 class="display-4 js-menu-item">itinerary</h2>
-            <div>
-                <div class="js-item card-block">
-                    {% for item in itinerary if "now" | date('Y-m-d') <= item.startsAt | date('Y-m-d') %}
-                        {{ macros.itinerary(item) }}
-                    {% endfor %}
-                    <div class="card card-block">
-                        <h2 style="text-align: center;" class="display-4">Past</h2>
-                    </div>
-                    {% for item in itinerary if "now" | date('Y-m-d') > item.startsAt | date('Y-m-d') %}
-                        {{ macros.itinerary(item) }}
-                    {% endfor %}
+            <div class="js-item js-itinerary-wrapper card-block">
+                {% for item in itinerary if "now" | date('Y-m-d') <= item.startsAt | date('Y-m-d') %}
+                    {{ macros.itinerary(item) }}
+                {% endfor %}
+                <div class="card card-block">
+                    <h2 style="text-align: center;" class="display-4">Past</h2>
                 </div>
+                {% for item in itinerary if "now" | date('Y-m-d') > item.startsAt | date('Y-m-d') %}
+                    {{ macros.itinerary(item) }}
+                {% endfor %}
             </div>
         </div>
 
@@ -214,11 +214,18 @@
             var EuropeTravelsApp = {
                 initialize: function ($wrapper) {
 
-                    this.euridr = {{ fixer.EURIDR }};
-                    this.gbpidr = {{ fixer.GBPIDR }};
-                    this.gbpeur = {{ fixer.GBPEUR }};
-                    this.czkidr = {{ fixer.CZKIDR }};
-                    this.czkeur = {{ fixer.CZKEUR }};
+                    this.changes = {
+                        'paymentStatusList': false,
+                        'itinerary': false
+                    };
+
+                    this.rates = {
+                        'euridr': {{ fixer.EURIDR }},
+                        'gbpidr': {{ fixer.GBPIDR }},
+                        'gbpeur': {{ fixer.GBPEUR }},
+                        'czkidr': {{ fixer.CZKIDR }},
+                        'czkeur': {{ fixer.CZKEUR }}
+                    };
 
                     this.$wrapper = $wrapper;
 
@@ -232,7 +239,7 @@
                         this.handleFormMenuItemClick
                     );
 
-                    this.$wrapper.find('.js-row-title').on(
+                    this.$wrapper.find('.js-payment-status-row').on(
                         'click',
                         this.handleRowTitleClick
                     );
@@ -284,27 +291,32 @@
                     var $wrapper = $('.js-payment-status-wrapper');
                     switch (e.currentTarget.innerText) {
                         case 'Base':
-                            $wrapper.find('.js-payment-status-list-item').each(function () {
+                            $wrapper.find('.js-payment-status-list-item').each(
+                                function () {
                                     $(this).text($(this).data('costs-base'))
                                 }
                             );
                             break;
                         case 'IDR':
-                            $wrapper.find('.js-payment-status-list-item').each(function () {
+                            $wrapper.find('.js-payment-status-list-item').each(
+                                function () {
                                     $(this).text($(this).data('costs-idr'));
                                 }
                             );
-                            $wrapper.find('.js-payment-status-total').each(function () {
+                            $wrapper.find('.js-payment-status-total').each(
+                                function () {
                                     $(this).text($(this).data('total-idr'))
                                 }
                             );
                             break;
                         case 'EUR':
-                            $wrapper.find('.js-payment-status-list-item').each(function () {
+                            $wrapper.find('.js-payment-status-list-item').each(
+                                function () {
                                     $(this).text($(this).data('costs-eur'))
                                 }
                             );
-                            $wrapper.find('.js-payment-status-total').each(function () {
+                            $wrapper.find('.js-payment-status-total').each(
+                                function () {
                                     $(this).text($(this).data('total-eur'))
                                 }
                             );
@@ -313,7 +325,14 @@
                     }
                 },
 
-                handleMenuItemClick: function () {
+                handleMenuItemClick: function (e) {
+
+                    if (e.currentTarget.innerText === 'payments' && EuropeTravelsApp.changes.paymentStatusList === true) {
+                        RenewApp.paymentStatusList();
+                    } else if (e.currentTarget.innerText === 'itinerary' && EuropeTravelsApp.changes.itinerary === true) {
+                        RenewApp.itinerary();
+                    }
+
                     $(this).next('div').slideToggle();
                     $(this).parent().siblings().children().next().slideUp();
                 },
@@ -338,12 +357,27 @@
                         processData: false,
                         contentType: false,
                         cache: false,
-                        success: function (response) {
-                            console.log('test');
-                            addNewApp.handleFormSuccess({
-                                'form': $(this).serializeArray(),
-                                'data': response
-                            })
+                        success: function (object) {
+                            switch (object) {
+                                case 'Transport':
+                                    RenewApp.transport();
+                                    EuropeTravelsApp.changes.itinerary = true;
+                                    break;
+                                case 'Hotel':
+                                    RenewApp.hotel();
+                                    EuropeTravelsApp.changes.itinerary = true;
+                                    break;
+                                case 'Attraction':
+                                    RenewApp.attraction();
+                                    EuropeTravelsApp.changes.itinerary = true;
+                                    break;
+                                case 'prepayment':
+                                    RenewApp.paymentStatusList();
+                                    break;
+                                case 'document':
+                                    RenewApp.documentList();
+                                    break;
+                            }
                         }
                     })
                 },
@@ -365,7 +399,7 @@
                     switch (baseCurrency) {
                         case 'EUR':
                             if (showCurrency === 'EUR') {
-                                self.text('IDR ' + (costs * EuropeTravelsApp.euridr).toLocaleString());
+                                self.text('IDR ' + (costs * EuropeTravelsApp.rates.euridr).toLocaleString());
                                 self.data('show-currency', 'IDR');
                             } else {
                                 self.text('€ ' + costs);
@@ -374,10 +408,10 @@
                             break;
                         case 'GBP':
                             if (showCurrency === 'GBP') {
-                                self.text('IDR ' + (costs * EuropeTravelsApp.gbpidr).toLocaleString());
+                                self.text('IDR ' + (costs * EuropeTravelsApp.rates.gbpidr).toLocaleString());
                                 self.data('show-currency', 'IDR');
                             } else if (showCurrency === 'IDR') {
-                                self.text('€ ' + (costs * EuropeTravelsApp.gbpeur).toLocaleString());
+                                self.text('€ ' + (costs * EuropeTravelsApp.rates.gbpeur).toLocaleString());
                                 self.data('show-currency', 'EUR');
                             } else {
                                 self.text('£ ' + costs);
@@ -386,10 +420,10 @@
                             break;
                         case 'CZK':
                             if (showCurrency === 'CZK') {
-                                self.text('IDR ' + (costs * EuropeTravelsApp.czkidr).toLocaleString());
+                                self.text('IDR ' + (costs * EuropeTravelsApp.rates.czkidr).toLocaleString());
                                 self.data('show-currency', 'IDR');
                             } else if (showCurrency === 'IDR') {
-                                self.text('€ ' + (costs * EuropeTravelsApp.czkeur).toLocaleString());
+                                self.text('€ ' + (costs * EuropeTravelsApp.rates.czkeur).toLocaleString());
                                 self.data('show-currency', 'EUR');
                             } else {
                                 self.text('CZK ' + costs);
@@ -398,7 +432,7 @@
                             break;
                         default:
                             if (showCurrency === 'IDR') {
-                                self.text('€ ' + (costs / EuropeTravelsApp.euridr).toLocaleString());
+                                self.text('€ ' + (costs / EuropeTravelsApp.rates.euridr).toLocaleString());
                                 self.data('show-currency', 'EUR');
                             } else {
                                 self.text('IDR ' + costs);
@@ -411,19 +445,25 @@
                 handlePaymentStatusChange: function(e) {
                     e.preventDefault();
 
-                    var $dropDownMenu = $(this).closest('div');
+                    var $self = $(this);
                     var paymentStatus = $(this).text();
+                    var id = $(this).closest('div').data('id');
 
                     $.ajax({
                         url: '/api/payment-status',
                         data: {
-                            'entity': $dropDownMenu.data('entity'),
-                            'id':     $dropDownMenu.data('id'),
+                            'id': id,
                             'paymentStatus': paymentStatus
                         },
                         method: 'POST',
                         success: function () {
-                            $dropDownMenu.prev().text(paymentStatus);
+                            $('#btnGroupDropCollection' + id).text(paymentStatus);
+                            $('#btnGroupDropItinerary' + id).text(paymentStatus);
+                            if ($self.closest('.js-menu-item-wrapper').find('.js-menu-item').text() === 'payments') {
+                                RenewApp.paymentStatusList();
+                            } else {
+                                EuropeTravelsApp.changes.paymentStatusList = true;
+                            }
                         }
                     })
                 },
@@ -447,46 +487,66 @@
 
             };
 
-            var addNewApp = {
+            var RenewApp = {
+                paymentStatusList: function() {
+                    $.ajax({
+                        url: "/api/renew/payment",
+                        method: "GET",
+                        success: function (response) {
+                            var $wrapper = EuropeTravelsApp.$wrapper.find('.js-payment-status-list-wrapper');
+                            $wrapper.html(response);
 
-                handleFormSuccess: function(data) {
-                    switch (data.data.form) {
-                        case 'transport':
-                            this.transport(data);
-                            break;
-                        case 'hotel':
-                            this.hotel(data);
-                            break;
-                        case 'attraction':
-                            this.attraction(data);
-                            break;
-                        case 'prepayment':
-                            this.prepayment(data);
-                            break;
-                        case 'document':
-                            this.document(data);
-                            break;
-                    }
+                            $wrapper.find('.js-payment-status-row').on(
+                                'click',
+                                EuropeTravelsApp.handleRowTitleClick
+                            );
+
+                            $wrapper.find('.js-item-card-title').on(
+                                'click',
+                                EuropeTravelsApp.handleCardTitleClick
+                            );
+
+                            $wrapper.find('.js-payment-status-item').on(
+                                'click',
+                                EuropeTravelsApp.handlePaymentStatusChange
+                            );
+
+                            $wrapper.find('.js-costs').on(
+                                'click',
+                                EuropeTravelsApp.handleCostsClick
+                            );
+
+                            EuropeTravelsApp.changes.paymentStatusList = false;
+                        }
+                    })
                 },
 
-                transport: function (data) {
-                    console.log(data);
-                },
+                itinerary: function() {
+                    $.ajax({
+                        url: "/api/renew/itinerary",
+                        method: "GET",
+                        success: function (response) {
+                            var $wrapper = EuropeTravelsApp.$wrapper.find('.js-itinerary-wrapper');
+                            $wrapper.html(response);
 
-                hotel: function (data) {
+                            $wrapper.find('.js-item-card-title').on(
+                                'click',
+                                EuropeTravelsApp.handleCardTitleClick
+                            );
 
-                },
+                            $wrapper.find('.js-payment-status-item').on(
+                                'click',
+                                EuropeTravelsApp.handlePaymentStatusChange
+                            );
 
-                attraction: function (data) {
+                            $wrapper.find('.js-costs').on(
+                                'click',
+                                EuropeTravelsApp.handleCostsClick
+                            );
 
-                },
-
-                prepayment: function (data) {
-
-                },
-
-                document: function (data) {
-
+                            EuropeTravelsApp.changes.paymentStatusList = false;
+                        }
+                    })
                 }
             };
 
