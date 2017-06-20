@@ -92,7 +92,7 @@
                         {% include ':forms:payment.html.twig' %}
                     </div>
                     <div class="js-payment-status-wrapper">
-                        <div class="btn-group btn-group-lg js-payment-status-buttons-wrapper" role="group" aria-label="Basic example">
+                        <div class="btn-group btn-group-lg js-payment-status-buttons-wrapper" role="group">
                             <button type="button" class="btn btn-secondary col-sm-4">Base</button>
                             <button type="button" class="btn btn-secondary col-sm-4">IDR</button>
                             <button type="button" class="btn btn-secondary col-sm-4">EUR</button>
@@ -129,6 +129,20 @@
         <div class="js-menu-item-wrapper brown">
             <h2 class="display-4 js-menu-item">budget</h2>
             <div  style="display:none;">
+                <div class="btn-group btn-group-lg js-converter-base-button-wrapper" role="group">
+                    <button type="button" class="btn btn-secondary col-sm-4">€</button>
+                    <button type="button" class="btn btn-secondary col-sm-4">£</button>
+                    <button type="button" class="btn btn-secondary col-sm-4">CZK</button>
+                </div>
+                {% set baseCurrency = app.request.cookies.get('base-currency') %}
+                Budget left:
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        {{ currency(baseCurrency) }}
+                    </span>
+                    <input type="text" data-currency="{{ baseCurrency }}" class="form-control js-budget-converter">
+                    {% unset baseCurrency %}
+                </div>
 
 
             </div>
@@ -358,15 +372,17 @@
 
                 handleFormSubmit: function (e) {
                     e.preventDefault();
+                    var form = $(this)[0];
 
                     $.ajax({
                         url: $(this).closest('div').data('url'),
-                        data: new FormData($(this)[0]),
+                        data: new FormData(form),
                         method: 'POST',
                         processData: false,
                         contentType: false,
                         cache: false,
                         success: function (object) {
+                            form.reset();
                             RenewApp.switcher(object.toLowerCase())
                         }
                     })

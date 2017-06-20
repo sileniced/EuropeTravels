@@ -38,6 +38,7 @@ class ApiController extends Controller
             $object = $form->getData();
 
             $object->setDocumentPath($this->documentUploader($object->getDocument()));
+            $object->setEntity('Document');
 
             $em->persist($object);
             $em->flush();

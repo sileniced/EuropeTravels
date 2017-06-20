@@ -4,15 +4,24 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
+        $cookies = $request->cookies;
+
+        if (!$cookies->has('base-currency')) {
+            $cookies->set('base-currency', 'EUR');
+        }
 
         $generatePaymentStatus = $this->get('app.generate_payment_status_list')->generate();
         $fixer = $generatePaymentStatus['fixer'];
