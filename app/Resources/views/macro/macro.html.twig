@@ -85,11 +85,11 @@
         </td>
         <td class="js-payment-status-list-item"
             width="40%"
-            data-costs-base="{{ currency(payment.currency) }} {{ payment.costs }}"
+            data-costs-base="{{ payment.currency | currency }} {{ payment.costs }}"
             data-costs-idr="IDR {{ payment.costsIDR }}"
             data-costs-eur="€ {{ payment.costsEUR }}"
         >
-            {{ currency(payment.currency) }} {{ payment.costs }}
+            {{ payment.currency | currency }} {{ payment.costs }}
         </td>
     </tr>
     <tr style="display: none;">
@@ -155,7 +155,7 @@
                 data-show-currency="{{ object.currency }}"
                 data-base-costs="{{ object.costs }}"
         >
-            {{ currency(object.currency) }} {{ object.costs }}
+            {{ object.currency | currency }} {{ object.costs }}
         </button>
         <div class="btn-group" role="group">
             <button id="btnGroupDrop{{ parent }}{{ object.id }}" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -188,4 +188,73 @@
         <br>
     {% endfor %}
 
+{% endmacro %}
+
+{% macro budget(budget, variables) %}
+    <div class="input-group">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-secondary dropdown-toggle js-converter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ variables.variables.converterCurrency | currency }}
+            </button>
+            <div class="dropdown-menu js-converter-currency">
+                <a class="dropdown-item" data-value="EUR" href="#">€</a>
+                <a class="dropdown-item" data-value="IDR" href="#">IDR</a>
+                <a class="dropdown-item" data-value="GBP" href="#">£</a>
+                <a class="dropdown-item" data-value="CZK" href="#">CZK</a>
+            </div>
+        </div>
+        <input type="text" class="form-control js-budget-converter" data-currency="{{ variables.variables.converterCurrency }}" aria-label="Text input with dropdown button">
+    </div>
+    <table class="col-12">
+        <tr>
+            <th colspan="2">Amount</th>
+        </tr>
+        <tr>
+            <td width="50%" class="js-converter-eur">€ 0</td>
+            <td class="js-converter-idr">IDR 0</td>
+        </tr>
+        <tr>
+            <td class="js-converter-gbp">£ 0</td>
+            <td class="js-converter-czk">CZK 0</td>
+        </tr>
+        <tr>
+            <th colspan="2">Budget left</th>
+        </tr>
+        <tr>
+            <td class="js-converter-budget-eur">€ {{ budget['amount']['EUR'] }}</td>
+            <td class="js-converter-budget-idr">IDR {{ budget['amount']['IDR'] }}</td>
+        </tr>
+        <tr>
+            <td class="js-converter-budget-gbp">£ {{ budget['amount']['GBP'] }}</td>
+            <td class="js-converter-budget-czk">CZK {{ budget['amount']['CZK'] }}</td>
+        </tr>
+        <tr>
+            <th colspan="2">Budget today</th>
+        </tr>
+        <tr>
+            <td class="js-converter-today-eur">€ {{ budget['amountToday']['EUR'] }}</td>
+            <td class="js-converter-today-idr">IDR {{ budget['amountToday']['IDR'] }}</td>
+        </tr>
+        <tr>
+            <td class="js-converter-today-gbp">£ {{ budget['amountToday']['GBP'] }}</td>
+            <td class="js-converter-today-czk">CZK {{ budget['amountToday']['CZK'] }}</td>
+        </tr>
+        <tr>
+            <th colspan="2">Budget tomorrow</th>
+        </tr>
+        <tr>
+            <td class="js-converter-tomorrow-eur">€ {{ budget['amountTomorrow']['EUR'] }}</td>
+            <td class="js-converter-tomorrow-idr">IDR {{ budget['amountTomorrow']['IDR'] }}</td>
+        </tr>
+        <tr>
+            <td class="js-converter-tomorrow-gbp">£ {{ budget['amountTomorrow']['GBP'] }}</td>
+            <td class="js-converter-tomorrow-czk">CZK {{ budget['amountTomorrow']['CZK'] }}</td>
+        </tr>
+    </table>
+    <br/>
+    <div class="js-converter-description-wrapper" style="display: none;">
+        <input class="form-control js-converter-description" placeholder="description">
+    </div>
+    <button type="button" class="col-12 btn btn-secondary js-converter-submit">subtract amount from budget</button>
+    </div>
 {% endmacro %}

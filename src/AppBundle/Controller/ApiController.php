@@ -76,27 +76,6 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/payment-status", name="PaymentStatus")
-     * @param Request $request
-     * @return Response
-     */
-    public function paymentStatusChangeAction(Request $request)
-    {
-        $bag = $request->request;
-        $em = $this->getDoctrine()->getManager();
-
-        $object = $em->getRepository('AppBundle:PaymentStatus')
-            ->find($bag->get('id'));
-
-        $object->setPaymentStatus($bag->get('paymentStatus'));
-
-        $em->merge($object);
-        $em->flush();
-
-        return new Response(null, 204);
-    }
-
-    /**
      * @param $file
      * @return string
      */
@@ -119,5 +98,44 @@ class ApiController extends Controller
 
         return $hash;
 
+    }
+
+    /**
+     * @Route("/payment-status", name="PaymentStatus")
+     * @param Request $request
+     * @return Response
+     */
+    public function paymentStatusChangeAction(Request $request)
+    {
+        $bag = $request->request;
+        $em = $this->getDoctrine()->getManager();
+
+        $object = $em->getRepository('AppBundle:PaymentStatus')
+            ->find($bag->get('id'));
+
+        $object->setPaymentStatus($bag->get('paymentStatus'));
+
+        $em->merge($object);
+        $em->flush();
+
+        return new Response(null, 204);
+    }
+
+    /**
+     * @Route("/converter/{currency}")
+     * @param $currency
+     * @return Response
+     */
+    public function rememberConverterBaseCurrency($currency)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $variables = $em->getRepository('AppBundle:Variables')->findLastRow()[0];
+        $variables->setConverterCurrency($currency);
+
+        $em->merge($variables);
+        $em->flush();
+
+        return new Response($currency, 200);
     }
 }

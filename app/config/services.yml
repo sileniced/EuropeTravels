@@ -18,7 +18,19 @@ services:
 
     app.generate_payment_status_list:
         class: AppBundle\Service\generatePaymentStatusList
-        arguments: ['@doctrine.orm.entity_manager', '@buzz']
+        arguments: ['@doctrine.orm.entity_manager']
+
+    app.get_exchange_rates:
+        class: AppBundle\Service\fixerExchangeRates
+        arguments: ['@buzz']
+
+    app.get_budget:
+        class: AppBundle\Service\generateBudget
+        arguments: ['@doctrine.orm.entity_manager']
+
+    app.get_variables:
+        class: AppBundle\Service\getVariables
+        arguments: ['@doctrine.orm.entity_manager']
 
     app.twig_extension:
         class: AppBundle\Twig\AppExtension

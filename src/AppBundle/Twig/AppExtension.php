@@ -12,12 +12,19 @@ namespace AppBundle\Twig;
 
 class AppExtension extends \Twig_Extension
 {
+
+
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('documentLink', [$this, 'documentLinkFunction']),
-            new \Twig_SimpleFunction('currency', [$this, 'currencyFunction']),
+            new \Twig_SimpleFunction('documentLink', [$this, 'documentLinkFunction'])
+        ];
+    }
 
+    public function getFilters()
+    {
+        return [
+            new \Twig_SimpleFilter('currency', [$this, 'currencyFilter']),
         ];
     }
 
@@ -27,7 +34,7 @@ class AppExtension extends \Twig_Extension
         return sprintf('/check/%s/%s/%s/hash/%s', $description, $entity, $id, $hash);
     }
 
-    public function currencyFunction($currency)
+    public function currencyFilter($currency)
     {
         if ($currency == 'EUR') return '€';
         if ($currency == 'GBP') return '£';

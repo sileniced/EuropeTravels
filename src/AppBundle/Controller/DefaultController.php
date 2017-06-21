@@ -4,27 +4,18 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
+        $fixer = $this->get('app.get_exchange_rates')->getExchangeRates();
+
         $em = $this->getDoctrine()->getManager();
-
-        $cookies = $request->cookies;
-
-        if (!$cookies->has('base-currency')) {
-            $cookies->set('base-currency', 'EUR');
-        }
-
-        $generatePaymentStatus = $this->get('app.generate_payment_status_list')->generate();
-        $fixer = $generatePaymentStatus['fixer'];
 
         return $this->render('default/index.html.twig', [
             'transports' =>     $em->getRepository('AppBundle:Transport')->findAllOrderedByStartsAt(),
@@ -33,7 +24,8 @@ class DefaultController extends Controller
             'documents' =>      $em->getRepository('AppBundle:Document')->findAll(),
             'itinerary' =>      $em->getRepository('AppBundle:Itinerary')->findAllOrderedByStartsAt(),
             'payments' =>       $em->getRepository('AppBundle:Payment')->findAll(),
-            'paymentStatus' =>  $generatePaymentStatus['paymentStatus'],
+            'paymentStatus' =>  $this->get('app.generate_payment_status_list')->generate($fixer),
+            'budget' =>         $this->get('app.get_budget')->generate($fixer),
             'forms' => [
                 'document' =>   $this->createForm('AppBundle\Form\DocumentEmbeddedForm')->createView(),
                 'transport' =>  $this->createForm('AppBundle\Form\TransportFormType')->createView(),
@@ -41,13 +33,8 @@ class DefaultController extends Controller
                 'attraction'=>  $this->createForm('AppBundle\Form\AttractionFormType')->createView(),
                 'payment'=>     $this->createForm('AppBundle\Form\PaymentFormType')->createView()
             ],
-            'fixer' => [
-                'EURIDR' => $fixer['EURIDR'],
-                'GBPIDR' => $fixer['GBP']->IDR,
-                'GBPEUR' => $fixer['GBP']->EUR,
-                'CZKIDR' => $fixer['CZK']->IDR,
-                'CZKEUR' => $fixer['CZK']->EUR
-            ]
+            'fixer' =>          $fixer,
+            'variables' =>      $this->get('app.get_variables')
         ]);
     }
 }

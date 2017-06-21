@@ -9,31 +9,24 @@
 namespace AppBundle\Service;
 
 
-use Buzz\Browser as Buzz;
 use Doctrine\ORM\EntityManager;
 
 class generatePaymentStatusList
 {
 
     private $em;
-    private $buzz;
 
     /**
      * generatePaymentStatusList constructor.
      * @param EntityManager $em
-     * @param Buzz $buzz
      */
-    public function __construct(EntityManager $em, Buzz $buzz)
+    public function __construct(EntityManager $em)
     {
         $this->em = $em;
-        $this->buzz = $buzz;
     }
 
-    public function generate()
+    public function generate($fixer)
     {
-        $fixer['EURIDR'] = json_decode($this->buzz->get('http://api.fixer.io/latest?symbols=IDR')->getContent())->rates->IDR;
-        $fixer['GBP'] = json_decode($this->buzz->get('http://api.fixer.io/latest?base=GBP&symbols=IDR,EUR')->getContent())->rates;
-        $fixer['CZK'] = json_decode($this->buzz->get('http://api.fixer.io/latest?base=CZK&symbols=IDR,EUR')->getContent())->rates;
 
         $paymentStatusAll = $this->em->getRepository('AppBundle:PaymentStatus')->findGroupedByStatus();
 
@@ -62,14 +55,14 @@ class generatePaymentStatusList
 
             switch ($_paymentStatus->getCurrency()) {
                 case 'EUR':
-                    $costs['IDR'] = $costs['base'] * $fixer['EURIDR'];
+                    $costs['IDR'] = $costs['base'] * $fixer['EUR']->IDR;
                     $_paymentStatus->setCostsIDR(\number_format($costs['IDR'], 0, '.', ','));
                     $_paymentStatus->setCostsEUR(\number_format($costs['base'], 2, ',', '.'));
                     $paymentStatusTotal['IDR'] += $costs['IDR'];
                     $paymentStatusTotal['EUR'] += $costs['base'];
                     break;
                 case 'IDR':
-                    $costs['EUR'] = $costs['base'] / $fixer['EURIDR'];
+                    $costs['EUR'] = $costs['base'] / $fixer['EUR']->IDR;
                     $_paymentStatus->setCostsIDR(\number_format($costs['base'], 0, '.', ','));
                     $_paymentStatus->setCostsEUR(\number_format($costs['EUR'], 2, ',', '.'));
                     $paymentStatusTotal['IDR'] += $costs['base'];
@@ -90,11 +83,6 @@ class generatePaymentStatusList
         $paymentStatus[$paymentStatusCount]['total']['IDR'] = \number_format($paymentStatusTotal['IDR'], 0, '.', ',');
         $paymentStatus[$paymentStatusCount]['total']['EUR'] = \number_format($paymentStatusTotal['EUR'], 2, ',', '.');
 
-        $return = [
-            'paymentStatus' => $paymentStatus,
-            'fixer' => $fixer
-        ];
-
-        return $return;
+        return $paymentStatus;
     }
 }

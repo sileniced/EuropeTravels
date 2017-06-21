@@ -129,22 +129,17 @@
         <div class="js-menu-item-wrapper brown">
             <h2 class="display-4 js-menu-item">budget</h2>
             <div  style="display:none;">
-                <div class="btn-group btn-group-lg js-converter-base-button-wrapper" role="group">
-                    <button type="button" class="btn btn-secondary col-sm-4">€</button>
-                    <button type="button" class="btn btn-secondary col-sm-4">£</button>
-                    <button type="button" class="btn btn-secondary col-sm-4">CZK</button>
-                </div>
-                {% set baseCurrency = app.request.cookies.get('base-currency') %}
-                Budget left:
-                <div class="input-group">
-                    <span class="input-group-addon">
-                        {{ currency(baseCurrency) }}
-                    </span>
-                    <input type="text" data-currency="{{ baseCurrency }}" class="form-control js-budget-converter">
-                    {% unset baseCurrency %}
-                </div>
 
+                <div class="js-item card-block">
 
+                    <h5>Converter</h5>
+                    <div class="js-converter-results-wrapper"
+                         data-budget="{{ budget['amountInt'] }}"
+                         data-budget-today="{{ budget['amountTodayInt'] }}"
+                         data-days-left="{{ budget['daysLeft'] }}"
+                    >
+                        {{ macros.budget(budget, variables) }}
+                </div>
             </div>
         </div>
 
@@ -240,11 +235,30 @@
                     'itinerary': false
                 },
                 'rates': {
-                    'euridr': {{ fixer.EURIDR }},
-                    'gbpidr': {{ fixer.GBPIDR }},
-                    'gbpeur': {{ fixer.GBPEUR }},
-                    'czkidr': {{ fixer.CZKIDR }},
-                    'czkeur': {{ fixer.CZKEUR }}
+                    'idr': {
+                        'idr': 1,
+                        'eur': {{ fixer.IDR.EUR }},
+                        'gbp': {{ fixer.IDR.GBP }},
+                        'czk': {{ fixer.IDR.CZK }}
+                    },
+                    'eur': {
+                        'idr': {{ fixer.EUR.IDR }},
+                        'eur': 1,
+                        'gbp': {{ fixer.EUR.GBP }},
+                        'czk': {{ fixer.EUR.CZK }}
+                    },
+                    'gbp': {
+                        'idr': {{ fixer.GBP.IDR }},
+                        'eur': {{ fixer.GBP.EUR }},
+                        'gbp': 1,
+                        'czk': {{ fixer.GBP.CZK }}
+                    },
+                    'czk': {
+                        'idr': {{ fixer.CZK.IDR }},
+                        'eur': {{ fixer.CZK.EUR }},
+                        'gbp': {{ fixer.CZK.GBP }},
+                        'czk': 1
+                    }
                 }
             };
 
@@ -307,6 +321,99 @@
                         'click',
                         this.handlePaymentChange
                     );
+
+                    this.$wrapper.find('.js-converter-currency').find('a').on(
+                        'click',
+                        this.handleConverterCurrencyChange
+                    );
+
+                    this.$wrapper.find('.js-budget-converter').on(
+                        'change keyup paste click',
+                        this.handleConverterChange
+                    );
+
+                    this.$wrapper.find('.js-converter-submit').on(
+                        'click',
+                        this.handleConverterSubmit
+                    );
+
+                    this.$wrapper.find('.js-budget-subtract').on(
+                        'click',
+                        this.handleBudgetSubtraction
+                    );
+                },
+
+                handleConverterSubmit: function () {
+                    EuropeTravelsApp.$wrapper.find('.js-converter-description-wrapper').slideDown();
+                    $(this).text('submit');
+                    $(this).addClass('js-budget-subtract');
+                },
+
+                handleBudgetSubtraction: function () {
+                    var $input = EuropeTravelsApp.$wrapper.find('.js-budget-converter');
+
+                    $.ajax({
+                        url: "/api/budget/subtract/",
+                        data: {
+                            'amount': $input.val() * variables.rates[$input.data('currency').toLowerCase()].eur,
+                            'description': EuropeTravelsApp.$wrapper.find('.js-converter-description').val()
+                        },
+                        success: function () {
+                            RenewApp.budget();
+                        }
+                    })
+                },
+
+                handleConverterChange: function () {
+
+                    var $wrapper = EuropeTravelsApp.$wrapper.find('.js-converter-results-wrapper');
+
+                    var base = $(this).data('currency').toLowerCase();
+                    var amount = $(this).val();
+                    var budget = $wrapper.data('budget');
+
+                    var euro_amount = amount * variables.rates[base].eur;
+                    var budget_left = budget - euro_amount;
+                    var budget_today = $wrapper.data('budget-today') - euro_amount;
+                    var budget_tomorrow = (budget - euro_amount) / ($wrapper.data('days-left') - 1);
+
+                    $wrapper.find('.js-converter-eur').text('€ ' +    euro_amount.toLocaleString());
+                    $wrapper.find('.js-converter-idr').text('IDR ' + (amount * variables.rates[base].idr).toLocaleString());
+                    $wrapper.find('.js-converter-gbp').text('£ ' +   (amount * variables.rates[base].gbp).toLocaleString());
+                    $wrapper.find('.js-converter-czk').text('CZK ' + (amount * variables.rates[base].czk).toLocaleString());
+
+                    $wrapper.find('.js-converter-budget-eur').text('€ ' +    budget_left.toLocaleString());
+                    $wrapper.find('.js-converter-budget-idr').text('IDR ' + (budget_left * variables.rates.eur.idr).toLocaleString());
+                    $wrapper.find('.js-converter-budget-gbp').text('£ ' +   (budget_left * variables.rates.eur.gbp).toLocaleString());
+                    $wrapper.find('.js-converter-budget-czk').text('CZK ' + (budget_left * variables.rates.eur.czk).toLocaleString());
+
+                    $wrapper.find('.js-converter-today-eur').text('€ ' +    budget_today.toLocaleString());
+                    $wrapper.find('.js-converter-today-idr').text('IDR ' + (budget_today * variables.rates.eur.idr).toLocaleString());
+                    $wrapper.find('.js-converter-today-gbp').text('£ ' +   (budget_today * variables.rates.eur.gbp).toLocaleString());
+                    $wrapper.find('.js-converter-today-czk').text('CZK ' + (budget_today * variables.rates.eur.czk).toLocaleString());
+
+                    $wrapper.find('.js-converter-tomorrow-eur').text('€ ' +    budget_tomorrow.toLocaleString());
+                    $wrapper.find('.js-converter-tomorrow-idr').text('IDR ' + (budget_tomorrow * variables.rates.eur.idr).toLocaleString());
+                    $wrapper.find('.js-converter-tomorrow-gbp').text('£ ' +   (budget_tomorrow * variables.rates.eur.gbp).toLocaleString());
+                    $wrapper.find('.js-converter-tomorrow-czk').text('CZK ' + (budget_tomorrow * variables.rates.eur.czk).toLocaleString());
+                },
+
+                handleConverterCurrencyChange: function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "/api/converter/" + $(this).data('value'),
+                        success: function (currency) {
+                            EuropeTravelsApp.$wrapper.find('.js-budget-converter').data('currency', currency);
+                            if (currency === 'EUR') {
+                                currency = '€';
+                            } else if (currency === 'GBP') {
+                                currency = '£';
+                            }
+                            EuropeTravelsApp.$wrapper.find('.js-converter-button').text(currency);
+                            EuropeTravelsApp.$wrapper.find('.js-budget-converter').click();
+                        }
+                    })
                 },
 
                 handlePaymentChange: function(e) {
@@ -402,7 +509,7 @@
 
                     switch (self.data('base-currency') + self.data('show-currency')) {
                         case 'EUREUR':
-                            self.text('IDR ' + (costs * variables.rates.euridr).toLocaleString());
+                            self.text('IDR ' + (costs * variables.rates.eur.idr).toLocaleString());
                             self.data('show-currency', 'IDR');
                             break;
                         case 'EURIDR':
@@ -410,11 +517,11 @@
                             self.data('show-currency', 'EUR');
                             break;
                         case 'GBPGBP':
-                            self.text('IDR ' + (costs * variables.rates.gbpidr).toLocaleString());
+                            self.text('IDR ' + (costs * variables.rates.gbp.idr).toLocaleString());
                             self.data('show-currency', 'IDR');
                             break;
                         case 'GBPIDR':
-                            self.text('€ ' + (costs * variables.rates.gbpeur).toLocaleString());
+                            self.text('€ ' + (costs * variables.rates.gbp.eur).toLocaleString());
                             self.data('show-currency', 'EUR');
                             break;
                         case 'GBPEUR':
@@ -422,11 +529,11 @@
                             self.data('show-currency', 'GBP');
                             break;
                         case 'CZKCZK':
-                            self.text('IDR ' + (costs * variables.rates.czkidr).toLocaleString());
+                            self.text('IDR ' + (costs * variables.rates.czk.idr).toLocaleString());
                             self.data('show-currency', 'IDR');
                             break;
                         case 'CZKIDR':
-                            self.text('€ ' + (costs * variables.rates.czkeur).toLocaleString());
+                            self.text('€ ' + (costs * variables.rates.czk.eur).toLocaleString());
                             self.data('show-currency', 'EUR');
                             break;
                         case 'CZKEUR':
@@ -434,7 +541,7 @@
                             self.data('show-currency', 'CZK');
                             break;
                         case 'IDRIDR':
-                            self.text('€ ' + (costs / variables.rates.euridr).toLocaleString());
+                            self.text('€ ' + (costs / variables.rates.eur.idr).toLocaleString());
                             self.data('show-currency', 'EUR');
                             break;
                         case 'IDREUR':
@@ -497,6 +604,7 @@
                         case 'attraction':
                             RenewApp.collection(object);
                             EuropeTravelsApp.changes.itinerary = true;
+                            EuropeTravelsApp.changes.paymentStatusList = true;
                             break;
                         case 'payment':
                             RenewApp.paymentStatusList();
@@ -529,6 +637,36 @@
                                 EuropeTravelsApp.handleCostsClick
                             );
 
+                        }
+                    })
+                },
+
+                budget: function () {
+                    $.ajax({
+                        url: "/api/renew/budget",
+                        success: function (response) {
+                            var $wrapper = EuropeTravelsApp.$wrapper.find('.js-converter-results-wrapper');
+                            $wrapper.html(response);
+
+                            $wrapper.find('.js-converter-currency').find('a').on(
+                                'click',
+                                this.handleConverterCurrencyChange
+                            );
+
+                            $wrapper.find('.js-budget-converter').on(
+                                'change keyup paste click',
+                                this.handleConverterChange
+                            );
+
+                            $wrapper.find('.js-converter-submit').on(
+                                'click',
+                                this.handleConverterSubmit
+                            );
+
+                            $wrapper.find('.js-budget-subtract').on(
+                                'click',
+                                this.handleBudgetSubtraction
+                            );
                         }
                     })
                 },
