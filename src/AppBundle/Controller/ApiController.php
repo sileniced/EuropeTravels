@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\BudgetSubtraction;
 use AppBundle\Entity\Hash;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -88,9 +89,7 @@ class ApiController extends Controller
 
         $file->move($directory . '/', $hash);
 
-        $_hash = new Hash();
-        $_hash->setHash($hash);
-        $_hash->setExtension($extension);
+        $_hash = new Hash($hash, $extension);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($_hash);
@@ -98,6 +97,31 @@ class ApiController extends Controller
 
         return $hash;
 
+    }
+
+
+    /**
+     * @Route("/budget/subtract")
+     * @param Request $request
+     * @return Response
+     */
+    public function updateBudgetAction(Request $request)
+    {
+        $bag = $request->request;
+        $em = $this->getDoctrine()->getManager();
+        $amount = $bag->get('amount');
+
+        $budget = $em->getRepository('AppBundle:Budget')->findLastRow()[0];
+        $budget->setAmount($budget->getAmount() - $amount);
+        $budget->setAmountToday($budget->getAmountToday() - $amount);
+
+        $budgetSubtraction = new BudgetSubtraction($amount, $bag->get('description'), $budget);
+        
+        $em->persist($budget);
+        $em->persist($budgetSubtraction);
+        $em->flush();
+
+        return new Response(null, 204);
     }
 
     /**

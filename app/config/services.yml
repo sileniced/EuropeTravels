@@ -4,9 +4,10 @@ parameters:
     #parameter_name: value
 
 services:
-    #service_name:
-    #    class: AppBundle\Directory\ClassName
-    #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']
+    app.security.login_form_authenticator:
+        class: AppBundle\Security\LoginFormAuthenticator
+        autowire: true
+
     app.form.type.local_datetime:
         class: AppBundle\FormType\LocalDateTimeType
         tags:

@@ -129,16 +129,11 @@
         <div class="js-menu-item-wrapper brown">
             <h2 class="display-4 js-menu-item">budget</h2>
             <div  style="display:none;">
-
                 <div class="js-item card-block">
-
                     <h5>Converter</h5>
-                    <div class="js-converter-results-wrapper"
-                         data-budget="{{ budget['amountInt'] }}"
-                         data-budget-today="{{ budget['amountTodayInt'] }}"
-                         data-days-left="{{ budget['daysLeft'] }}"
-                    >
+                    <div class="js-converter-results-wrapper-wrapper">
                         {{ macros.budget(budget, variables) }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -344,16 +339,16 @@
                 },
 
                 handleConverterSubmit: function () {
+                    EuropeTravelsApp.$wrapper.find('.js-converter-submit').slideUp();
                     EuropeTravelsApp.$wrapper.find('.js-converter-description-wrapper').slideDown();
-                    $(this).text('submit');
-                    $(this).addClass('js-budget-subtract');
                 },
 
                 handleBudgetSubtraction: function () {
                     var $input = EuropeTravelsApp.$wrapper.find('.js-budget-converter');
 
                     $.ajax({
-                        url: "/api/budget/subtract/",
+                        url: "/api/budget/subtract",
+                        method: "POST",
                         data: {
                             'amount': $input.val() * variables.rates[$input.data('currency').toLowerCase()].eur,
                             'description': EuropeTravelsApp.$wrapper.find('.js-converter-description').val()
@@ -645,27 +640,27 @@
                     $.ajax({
                         url: "/api/renew/budget",
                         success: function (response) {
-                            var $wrapper = EuropeTravelsApp.$wrapper.find('.js-converter-results-wrapper');
+                            var $wrapper = EuropeTravelsApp.$wrapper.find('.js-converter-results-wrapper-wrapper');
                             $wrapper.html(response);
 
                             $wrapper.find('.js-converter-currency').find('a').on(
                                 'click',
-                                this.handleConverterCurrencyChange
+                                EuropeTravelsApp.handleConverterCurrencyChange
                             );
 
                             $wrapper.find('.js-budget-converter').on(
                                 'change keyup paste click',
-                                this.handleConverterChange
+                                EuropeTravelsApp.handleConverterChange
                             );
 
                             $wrapper.find('.js-converter-submit').on(
                                 'click',
-                                this.handleConverterSubmit
+                                EuropeTravelsApp.handleConverterSubmit
                             );
 
                             $wrapper.find('.js-budget-subtract').on(
                                 'click',
-                                this.handleBudgetSubtraction
+                                EuropeTravelsApp.handleBudgetSubtraction
                             );
                         }
                     })

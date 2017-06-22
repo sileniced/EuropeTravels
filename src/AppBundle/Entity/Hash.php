@@ -35,6 +35,17 @@ class Hash
     private $extension;
 
     /**
+     * Hash constructor.
+     * @param $hash
+     * @param $extension
+     */
+    public function __construct($hash, $extension)
+    {
+        $this->hash = $hash;
+        $this->extension = $extension;
+    }
+
+    /**
      * @return mixed
      */
     public function getId()

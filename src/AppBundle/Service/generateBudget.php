@@ -36,12 +36,11 @@ class generateBudget
             $budget = new Budget();
             $budget->setAmount(6000);
 
-            $budget->setEndDate(new \DateTime('2017-08-04', new \DateTimeZone('Europe/Amsterdam')));
-            $budget->setLastDay($_today);
+            $budget->setEndDateAt(new \DateTime('2017-08-04', new \DateTimeZone('Europe/Amsterdam')));
+            $budget->setCreatedAt($_today);
 
-            $daysLeft = $_today->diff($budget->getEndDate());
+            $daysLeft = $_today->diff($budget->getEndDateAt());
             $budget->setAmountToday($budget->getAmount() / $daysLeft->days);
-
             $this->em->persist($budget);
             $this->em->flush();
 
@@ -51,16 +50,17 @@ class generateBudget
 
             $today = $_today->format('Y-m-d');
 
-            $_lastDay = $budget->getLastDay();
-            $lastDay = $_lastDay->format('Y-m-d');
+            $_createdAt = $budget->getCreatedAt();
+            $createdAt = $_createdAt->format('Y-m-d');
 
-            $daysLeft = $_today->diff($budget->getEndDate());
+            $daysLeft = $_today->diff($budget->getEndDateAt());
 
-            if ($today > $lastDay) {
+            if ($today > $createdAt) {
 
-                $budget->setLastDay($_today);
+                $budget->setCreatedAt($_today);
                 $budget->setAmountToday($budget->getAmount() / $daysLeft->days);
 
+                $this->em->detach($budget);
                 $this->em->persist($budget);
                 $this->em->flush();
 

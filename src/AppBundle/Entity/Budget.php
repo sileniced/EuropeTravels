@@ -27,12 +27,12 @@ class Budget
     /**
      * @ORM\Column(type="datetime")
      */
-    private $endDate;
+    private $endDateAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $lastDay;
+    private $createdAt;
 
     /**
      * @ORM\Column(type="float")
@@ -45,6 +45,11 @@ class Budget
     private $amountToday;
 
     /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\BudgetSubtraction", mappedBy="budget")
+     */
+    private $budgetSubtraction;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -55,17 +60,17 @@ class Budget
     /**
      * @return mixed
      */
-    public function getEndDate()
+    public function getEndDateAt()
     {
-        return $this->endDate;
+        return $this->endDateAt;
     }
 
     /**
-     * @param $endDate
+     * @param $endDateAt
      */
-    public function setEndDate($endDate)
+    public function setEndDateAt($endDateAt)
     {
-        $this->endDate = $endDate;
+        $this->endDateAt = $endDateAt;
     }
 
     /**
@@ -87,17 +92,17 @@ class Budget
     /**
      * @return mixed
      */
-    public function getLastDay()
+    public function getCreatedAt()
     {
-        return $this->lastDay;
+        return $this->createdAt;
     }
 
     /**
-     * @param mixed $lastDay
+     * @param mixed $createdAt
      */
-    public function setLastDay($lastDay)
+    public function setCreatedAt($createdAt)
     {
-        $this->lastDay = $lastDay;
+        $this->createdAt = $createdAt;
     }
 
     /**
@@ -116,5 +121,20 @@ class Budget
         $this->amountToday = $amountToday;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getBudgetSubtraction()
+    {
+        return $this->budgetSubtraction;
+    }
+
+    /**
+     * @param mixed $budgetSubtraction
+     */
+    public function setBudgetSubtraction($budgetSubtraction)
+    {
+        $this->budgetSubtraction = $budgetSubtraction;
+    }
 
 }
