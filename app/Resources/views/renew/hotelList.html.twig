@@ -1,0 +1,5 @@
+{% import ':macro:macro.html.twig' as macros %}
+
+{% for hotel in hotels %}
+    {{ macros.hotel(hotel, 'Collection') }}
+{% endfor %}

@@ -1,0 +1,6 @@
+{% set objForm = forms.document %}
+{{ form_start(objForm) }}
+{{ form_row(objForm.description) }}
+{{ form_row(objForm.document) }}
+<input type="submit" value="submit">
+{{ form_end(objForm) }}

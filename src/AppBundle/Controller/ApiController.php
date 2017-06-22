@@ -9,13 +9,11 @@
 namespace AppBundle\Controller;
 
 
-use AppBundle\Entity\PaymentStatus;
+use AppBundle\Entity\BudgetSubtraction;
 use AppBundle\Entity\Hash;
-use AppBundle\Entity\Itinerary;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,32 +27,22 @@ class ApiController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/new/payment", name="payment")
-     * @Method("POST")
-     * @return Response
-     */
-    public function NewPaymentAction(Request $request)
-    {
-        $form = $this->createForm('AppBundle\Form\PaymentFormType')->handleRequest($request);
-        if ($form->isValid()) {
-
-            return new Response('payment', 200);
-        }
-
-        return new Response(null, 500);
-    }
-
-    /**
-     * @param Request $request
      * @Route("/new/document", name="document")
      * @Method("POST")
      * @return Response
      */
     public function NewDocumentAction(Request $request)
     {
-        $form = $this->createForm('AppBundle\Form\DocumentFormType')->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm('AppBundle\Form\DocumentEmbeddedForm')->handleRequest($request);
         if ($form->isValid()) {
+            $object = $form->getData();
 
+            $object->setDocumentPath($this->documentUploader($object->getDocument()));
+            $object->setEntity('Document');
+
+            $em->persist($object);
+            $em->flush();
             return new Response('document', 200);
         }
 
@@ -75,59 +63,17 @@ class ApiController extends Controller
         if ($form->isValid()) {
             $object = $form->getData();
 
-            $document = [];
-            for ($i = 1; $i <= 3; $i++) {
-                $getDocument = 'getDocument' . $i;
-                $setDocumentPath = 'setDocumentPath' . $i;
-                $getDocumentDescription = 'getDocumentDescription' . $i;
-
-                if ($object->$getDocument()) {
-                    $hash = $this->documentUploader($object->$getDocument());
-                    $object->$setDocumentPath($hash);
-                    $document[$i] = [
-                        'description' => $object->$getDocumentDescription(),
-                        'hash' => $hash
-                    ];
-                }
+            foreach ($object->getDocuments() as $document) {
+                $document->setDocumentPath($this->documentUploader($document->getDocument()));
             }
-
-            $object->getItinerary()->setEntity($_object);
-            $object->getPaymentStatus()->setEntity($_object);
 
             $em->persist($object);
             $em->flush();
 
-            $data = [
-                'form' => 'transport',
-                'documents' => $document
-            ];
-
-            return new JsonResponse($data);
+            return new Response($_object, 200);
         }
 
         return new Response(null, 500);
-    }
-
-    /**
-     * @Route("/payment-status", name="PaymentStatus")
-     * @param Request $request
-     * @return Response
-     */
-    public function paymentStatusChangeAction(Request $request)
-    {
-
-        $bag = $request->request;
-        $em = $this->getDoctrine()->getManager();
-
-        $object = $em->getRepository('AppBundle:' . $bag->get('entity'))
-            ->find($bag->get('id'));
-
-        $object->getPaymentStatus()->setPaymentStatus($bag->get('paymentStatus'));
-
-        $em->merge($object);
-        $em->flush();
-
-        return new Response(null, 204);
     }
 
     /**
@@ -143,9 +89,7 @@ class ApiController extends Controller
 
         $file->move($directory . '/', $hash);
 
-        $_hash = new Hash();
-        $_hash->setHash($hash);
-        $_hash->setExtension($extension);
+        $_hash = new Hash($hash, $extension);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($_hash);
@@ -153,5 +97,69 @@ class ApiController extends Controller
 
         return $hash;
 
+    }
+
+
+    /**
+     * @Route("/budget/subtract")
+     * @param Request $request
+     * @return Response
+     */
+    public function updateBudgetAction(Request $request)
+    {
+        $bag = $request->request;
+        $em = $this->getDoctrine()->getManager();
+        $amount = $bag->get('amount');
+
+        $budget = $em->getRepository('AppBundle:Budget')->findLastRow()[0];
+        $budget->setAmount($budget->getAmount() - $amount);
+        $budget->setAmountToday($budget->getAmountToday() - $amount);
+
+        $budgetSubtraction = new BudgetSubtraction($amount, $bag->get('description'), $budget);
+        
+        $em->persist($budget);
+        $em->persist($budgetSubtraction);
+        $em->flush();
+
+        return new Response(null, 204);
+    }
+
+    /**
+     * @Route("/payment-status", name="PaymentStatus")
+     * @param Request $request
+     * @return Response
+     */
+    public function paymentStatusChangeAction(Request $request)
+    {
+        $bag = $request->request;
+        $em = $this->getDoctrine()->getManager();
+
+        $object = $em->getRepository('AppBundle:PaymentStatus')
+            ->find($bag->get('id'));
+
+        $object->setPaymentStatus($bag->get('paymentStatus'));
+
+        $em->merge($object);
+        $em->flush();
+
+        return new Response(null, 204);
+    }
+
+    /**
+     * @Route("/converter/{currency}")
+     * @param $currency
+     * @return Response
+     */
+    public function rememberConverterBaseCurrency($currency)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $variables = $em->getRepository('AppBundle:Variables')->findLastRow()[0];
+        $variables->setConverterCurrency($currency);
+
+        $em->merge($variables);
+        $em->flush();
+
+        return new Response($currency, 200);
     }
 }

@@ -7,7 +7,7 @@ use AppBundle\Entity\Itinerary;
 use AppBundle\Entity\PaymentStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,12 +19,16 @@ class AttractionFormType extends AbstractType
         $builder
             ->add('city', ChoiceType::class, [
                 'choices' => [
-                    'Düsseldorf' => 'Düsseldorf',
-                    'Venice'     => 'Venice',
-                    'London'     => 'London',
-                    'Prague'     => 'Santorini',
-                    'Paris'      => 'Paris',
-                    'other'      => 'other'
+                    'Düsseldorf'    => 'Düsseldorf',
+                    'Venice'        => 'Venice',
+                    'Hilversum'     => 'Hilversum',
+                    'Phantasialand' => 'Phantasialand',
+                    'London'        => 'London',
+                    'Prague'        => 'Prague',
+                    'Brussels'      => 'Brussels',
+                    'Paris'         => 'Paris',
+                    'DisneyLand'    => 'DisneyLand',
+                    'other'         => 'other'
                 ]
             ])
             ->add('description')
@@ -36,22 +40,19 @@ class AttractionFormType extends AbstractType
             ->add('paymentStatus', PaymentStatusEmbeddedForm::class, [
                 'data_class' => PaymentStatus::class
             ])
-            ->add('documentDescription1')
-            ->add('document1', FileType::class, ['required' => false])
-            ->add('documentDescription2')
-            ->add('document2', FileType::class, ['required' => false])
-            ->add('documentDescription3')
-            ->add('document3', FileType::class, ['required' => false])
+            ->add('documents', CollectionType::class, [
+                'entry_type' => DocumentEmbeddedForm::class,
+                'allow_delete' => true,
+                'allow_add' => true,
+                'by_reference' => false,
+            ])
             ->add('submit', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Attraction::class,
-            'attr' => [
-                'data-url' => '/api/attraction'
-            ]
+            'data_class' => Attraction::class
         ]);
     }
 }

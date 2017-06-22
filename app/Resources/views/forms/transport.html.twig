@@ -1,0 +1,24 @@
+{% set objForm = forms.transport %}
+{{ form_start(objForm) }}
+{{ form_row(objForm.category) }}
+{{ form_row(objForm.meansOfTransport) }}
+{{ form_row(objForm.description) }}
+{{ form_row(objForm.address) }}
+{{ form_row(objForm.itinerary) }}
+{{ form_row(objForm.paymentStatus) }}
+<div class="js-document-wrapper"
+     data-prototype="{{ macros.formDocument(objForm.documents.vars.prototype) | e('html_attr') }}"
+     data-index="{{ objForm.documents | length }}"
+>
+    {% for documentForm in objForm.documents %}
+        {{ macros.formDocument(documentForm) }}
+    {% endfor %}
+    <a href="#" class="js-document-add">
+        Add another document
+    </a>
+</div>
+
+{{ form_widget(objForm.submit) }}
+{{ form_widget(objForm._token) }}
+{{ form_widget(objForm.documents) }}
+{{ form_end(objForm, {'render_rest': false}) }}

@@ -1,0 +1,23 @@
+{% set objForm = forms.hotel %}
+{{ form_start(objForm) }}
+{{ form_row(objForm.city) }}
+{{ form_row(objForm.name) }}
+{{ form_row(objForm.link) }}
+{{ form_row(objForm.address) }}
+{{ form_row(objForm.itinerary) }}
+{{ form_row(objForm.paymentStatus) }}
+<div class="js-document-wrapper"
+     data-prototype="{{ macros.formDocument(objForm.documents.vars.prototype) | e('html_attr') }}"
+     data-index="{{ objForm.documents | length }}"
+>
+    {% for documentForm in objForm.documents %}
+        {{ macros.formDocument(documentForm) }}
+    {% endfor %}
+    <a href="#" class="js-document-add white-text">
+        Add another document
+    </a>
+</div>
+{{ form_widget(objForm.documents) }}
+{{ form_widget(objForm.submit) }}
+{{ form_widget(objForm._token) }}
+{{ form_end(objForm, {'render_rest': false}) }}

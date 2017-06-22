@@ -1,0 +1,5 @@
+{% import ':macro:macro.html.twig' as macros %}
+
+{% for attraction in attractions %}
+    {{ macros.attraction(attraction, 'Collection') }}
+{% endfor %}

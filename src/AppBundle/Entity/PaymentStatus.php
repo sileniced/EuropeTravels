@@ -30,6 +30,15 @@ class PaymentStatus
      */
     private $costs;
 
+    private $costsIDR;
+
+    private $costsEUR;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $currency;
+
     /**
      * @ORM\Column(type="string")
      */
@@ -90,6 +99,54 @@ class PaymentStatus
     public function setCosts($costs)
     {
         $this->costs = $costs;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCostsIDR()
+    {
+        return $this->costsIDR;
+    }
+
+    /**
+     * @param mixed $costsIDR
+     */
+    public function setCostsIDR($costsIDR)
+    {
+        $this->costsIDR = $costsIDR;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCostsEUR()
+    {
+        return $this->costsEUR;
+    }
+
+    /**
+     * @param mixed $costsEUR
+     */
+    public function setCostsEUR($costsEUR)
+    {
+        $this->costsEUR = $costsEUR;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param mixed $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
     }
 
     /**

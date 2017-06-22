@@ -1,0 +1,11 @@
+{% import ':macro:macro.html.twig' as macros %}
+
+{% for item in itinerary if "now" | date('Y-m-d') <= item.startsAt | date('Y-m-d') %}
+    {{ macros.itinerary(item) }}
+{% endfor %}
+<div class="card card-block">
+    <h2 style="text-align: center;" class="display-4">Past</h2>
+</div>
+{% for item in itinerary if "now" | date('Y-m-d') > item.startsAt | date('Y-m-d') %}
+    {{ macros.itinerary(item) }}
+{% endfor %}
