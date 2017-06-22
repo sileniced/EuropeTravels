@@ -78,7 +78,7 @@ class Attraction
 
         $this->documents[] = $document;
 
-        $document->setEntity('Hotel');
+        $document->setEntity('Attraction');
         $document->setAttraction($this);
     }
 
@@ -155,7 +155,7 @@ class Attraction
      */
     public function setItinerary(Itinerary $itinerary)
     {
-        $itinerary->setEntity('Hotel');
+        $itinerary->setEntity('Attraction');
         $this->itinerary = $itinerary;
     }
 
@@ -172,7 +172,7 @@ class Attraction
      */
     public function setPaymentStatus(PaymentStatus $paymentStatus)
     {
-        $paymentStatus->setEntity('Hotel');
+        $paymentStatus->setEntity('Attraction');
         $this->paymentStatus = $paymentStatus;
     }
 

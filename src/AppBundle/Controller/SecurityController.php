@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Form\LoginForm;
@@ -21,6 +22,15 @@ class SecurityController extends Controller
      */
     public function loginAction()
     {
+
+        $em = $this->getDoctrine()->getManager();
+
+        if (!$em->getRepository('AppBundle:User')->findLastRow()) {
+            $newUser = new User('kitty');
+            $em->persist($newUser);
+            $em->flush();
+        }
+
         $authenticationUtils = $this->get('security.authentication_utils');
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -39,5 +49,13 @@ class SecurityController extends Controller
                 'error' => $error,
             )
         );
+    }
+
+    /**
+     * @Route("/logout", name="security_logout")
+     */
+    public function logoutAction()
+    {
+        throw new \Exception('The silver lining of it all');
     }
 }

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\Table(name="user")
  */
 class User implements UserInterface
@@ -30,6 +30,15 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $username;
+
+    /**
+     * User constructor.
+     * @param $username
+     */
+    public function __construct($username)
+    {
+        $this->username = $username;
+    }
 
     /**
      * Returns the username used to authenticate the user.

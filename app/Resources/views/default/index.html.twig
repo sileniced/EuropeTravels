@@ -73,7 +73,7 @@
                     <div data-url="{{ path('document') }}" class="js-form-item" style="display:none;">
                         {% include ':forms:document.html.twig' %}
                     </div>
-                    <div class="js-document-wrapper">
+                    <div class="js-document-list-wrapper">
                         {% for document in documents %}
                             {{ macros.document(document) }}
                         {% endfor %}
@@ -227,7 +227,8 @@
             var variables = {
                 'changes': {
                     'paymentStatusList': false,
-                    'itinerary': false
+                    'itinerary': false,
+                    'documentList': false
                 },
                 'rates': {
                     'idr': {
@@ -456,6 +457,8 @@
                         RenewApp.paymentStatusList();
                     } else if (e.currentTarget.innerText === 'itinerary' && variables.changes.itinerary === true) {
                         RenewApp.itinerary();
+                    } else if (e.currentTarget.innerText === 'documents' && variables.changes.documentList === true) {
+                        RenewApp.itinerary();
                     }
 
                     $(this).next('div').slideToggle();
@@ -597,11 +600,13 @@
                         case 'transport':
                         case 'hotel':
                         case 'attraction':
+                            variables.changes.itinerary = true;
+                            variables.changes.paymentStatusList = true;
+                            variables.changes.documentList = true;
                             RenewApp.collection(object);
-                            EuropeTravelsApp.changes.itinerary = true;
-                            EuropeTravelsApp.changes.paymentStatusList = true;
                             break;
                         case 'payment':
+                            variables.changes.documentList = true;
                             RenewApp.paymentStatusList();
                             break;
                         case 'document':
@@ -729,7 +734,8 @@
                     $.ajax({
                         url: "api/renew/document",
                         success: function (response) {
-                            EuropeTravelsApp.$wrapper.find('.js-document-wrapper').html(response);
+                            EuropeTravelsApp.$wrapper.find('.js-document-list-wrapper').html(response);
+                            variables.changes.documentList = false;
                         }
                     })
                 }

@@ -30,6 +30,8 @@ class generatePaymentStatusList
 
         $paymentStatusAll = $this->em->getRepository('AppBundle:PaymentStatus')->findGroupedByStatus();
 
+        if (!$paymentStatusAll) return null;
+
         $paymentStatus = [];
         $__paymentStatus = '';
         $paymentStatusCount = null;

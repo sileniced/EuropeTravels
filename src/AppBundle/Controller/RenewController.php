@@ -53,8 +53,8 @@ class RenewController extends Controller
                     'attractions' => $em->getRepository('AppBundle:Attraction')->findAllOrderedByStartsAt(),
                 ]), 200);
             case 'document':
-                return new Response($this->renderView('renew/itineraryList.html.twig', [
-                    'paymentStatus' => $em->getRepository('AppBundle:Itinerary')->findAllOrderedByStartsAt()
+                return new Response($this->renderView('renew/documentList.html.twig', [
+                    'documents' => $em->getRepository('AppBundle:Document')->findAll()
                 ]), 200);
             case 'budget':
                 return new Response($this->renderView('renew/budget.html.twig', [
