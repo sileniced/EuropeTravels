@@ -61,6 +61,10 @@ class RenewController extends Controller
                     'budget' => $this->get('app.get_budget')->generate($fixer),
                     'variables' => $this->get('app.get_variables')
                 ]), 200);
+            case 'budget-history':
+                return new Response($this->renderView('renew/budgetHistory.html.twig', [
+                    'budgetHistory' => $em->getRepository('AppBundle:Budget')->findDesc(),
+                ]), 200);
         }
     }
 }

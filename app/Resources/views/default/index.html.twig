@@ -129,11 +129,29 @@
         <div class="js-menu-item-wrapper brown">
             <h2 class="display-4 js-menu-item">budget</h2>
             <div  style="display:none;">
-                <div class="js-item card-block">
-                    <h5>Converter</h5>
-                    <div class="js-converter-results-wrapper-wrapper">
-                        {{ macros.budget(budget, variables) }}
+                <div class="js-item">
+                    <div class="js-menu-item-wrapper">
+                        <h2 class="display-4 js-menu-item">converter</h2>
+                        <div class="card-block">
+
+                            <div class="js-converter-results-wrapper-wrapper">
+                                {{ macros.budget(budget.budget, variables) }}
+                            </div>
+
+                        </div>
                     </div>
+
+                    <div class="js-menu-item-wrapper">
+                        <h2 class="display-4 js-menu-item">history</h2>
+                        <div class="card-block js-budget-history-wrapper" style="display:none;">
+
+                            {% for history in budget.history %}
+                                {{ macros.budgetHistory(history) }}
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -153,7 +171,7 @@
                                 {% include ':forms:transport.html.twig' %}
                             </div>
                             <div class="js-transport-wrapper">
-                                {% for transport in transports %}
+                                {% for transport in collection.transports %}
                                     {{ macros.transport(transport, 'Collection') }}
                                 {% endfor %}
                             </div>
@@ -171,7 +189,7 @@
                                 {% include ':forms:hotel.html.twig' %}
                             </div>
                             <div class="js-hotel-wrapper">
-                                {% for hotel in hotels %}
+                                {% for hotel in collection.hotels %}
                                     {{ macros.hotel(hotel, 'Collection') }}
                                 {% endfor %}
                             </div>
@@ -189,7 +207,7 @@
                                 {% include ':forms:attraction.html.twig' %}
                             </div>
                             <div class="js-attraction-wrapper">
-                                {% for attraction in attractions %}
+                                {% for attraction in collection.attractions %}
                                     {{ macros.attraction(attraction, 'Collection') }}
                                 {% endfor %}
                             </div>
@@ -228,7 +246,8 @@
                 'changes': {
                     'paymentStatusList': false,
                     'itinerary': false,
-                    'documentList': false
+                    'documentList': false,
+                    'budgetHistory': false
                 },
                 'rates': {
                     'idr': {
@@ -355,6 +374,7 @@
                             'description': EuropeTravelsApp.$wrapper.find('.js-converter-description').val()
                         },
                         success: function () {
+                            variables.changes.budgetHistory = true;
                             RenewApp.budget();
                         }
                     })
@@ -459,6 +479,8 @@
                         RenewApp.itinerary();
                     } else if (e.currentTarget.innerText === 'documents' && variables.changes.documentList === true) {
                         RenewApp.itinerary();
+                    }else if (e.currentTarget.innerText === 'history' && variables.changes.budgetHistory === true) {
+                        RenewApp.budgetHistory();
                     }
 
                     $(this).next('div').slideToggle();
@@ -613,6 +635,15 @@
                             RenewApp.documentList();
                             break;
                     }
+                },
+
+                budgetHistory: function () {
+                    $.ajax({
+                        url: "/api/renew/budget-history",
+                        success: function (response) {
+                            EuropeTravelsApp.$wrapper.find('.js-budget-history-wrapper').html(response);
+                        }
+                    })
                 },
 
                 collection: function (entity) {

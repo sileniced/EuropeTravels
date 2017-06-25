@@ -21,4 +21,12 @@ class BudgetRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function findDesc()
+    {
+        return $this->createQueryBuilder('budget')
+            ->orderBy('budget.id', 'DESC')
+            ->getQuery()
+            ->execute();
+    }
 }

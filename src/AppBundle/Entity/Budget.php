@@ -9,7 +9,9 @@
 namespace AppBundle\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use function Symfony\Component\Debug\Tests\testHeader;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BudgetRepository")
@@ -39,6 +41,8 @@ class Budget
      */
     private $amount;
 
+    private $spent;
+
     /**
      * @ORM\Column(type="float")
      */
@@ -47,7 +51,30 @@ class Budget
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\BudgetSubtraction", mappedBy="budget")
      */
-    private $budgetSubtraction;
+    private $budgetSubtraction = [];
+
+    /**
+     * Budget constructor.
+     * @param array $budgetSubtraction
+     */
+    public function __construct(array $budgetSubtraction)
+    {
+        $this->budgetSubtraction = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSpent()
+    {
+        $spent = 0;
+
+        foreach ($this->getBudgetSubtraction() as $subtraction) {
+            $spent += $subtraction->getAmount();
+        }
+
+        return $spent;
+    }
 
     /**
      * @return mixed
@@ -132,7 +159,7 @@ class Budget
     /**
      * @param mixed $budgetSubtraction
      */
-    public function setBudgetSubtraction($budgetSubtraction)
+    public function setBudgetSubtraction(BudgetSubtraction $budgetSubtraction)
     {
         $this->budgetSubtraction = $budgetSubtraction;
     }

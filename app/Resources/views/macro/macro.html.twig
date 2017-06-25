@@ -276,3 +276,27 @@
         <button type="button" class="col-12 btn btn-secondary js-converter-submit">subtract amount from budget</button>
     </div>
 {% endmacro %}
+
+{% macro budgetHistory(history) %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th width="50%">description</th>
+            <th>costs</th>
+        </tr>
+        <tr>
+            <th>{{ history.createdAt | date('Y-m-d') }}</th>
+            <th>€ {{ 0 - history.spent }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for costs in history.budgetSubtraction %}
+            <tr>
+                <td>{{ costs.description }}</td>
+                <td>€ {{ 0 - costs.amount }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br/><br/>
+{% endmacro %}

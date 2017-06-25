@@ -111,7 +111,7 @@ class BudgetSubtraction
     /**
      * @param mixed $budget
      */
-    public function setBudget($budget)
+    public function setBudget(Budget $budget)
     {
         $this->budget = $budget;
     }
