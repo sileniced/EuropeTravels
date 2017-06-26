@@ -1,0 +1,53 @@
+.js-form-item {
+    padding-bottom: 40px;
+}
+
+.js-menu-item-wrapper {
+    box-shadow: 0 -1px 5px 0;
+}
+
+.js-menu-item {
+    margin-bottom: 0 !important;
+}
+
+.js-item-card-title {
+    text-align: center;
+}
+
+.js-item-title {
+    text-align: center;
+}
+
+.js-document-wrapper {
+    margin-bottom: 30px;
+}
+
+.js-payment-status-list-item,
+.js-payment-status-total {
+    text-align: right;
+}
+
+.js-payment-status-total {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.blue {
+    background-color: #DEF0F2;
+}
+
+.green {
+    background-color: #CCDEC6;
+}
+
+.brown {
+    background-color: #9C9E90;
+}
+
+.red {
+    background-color: #E2B699;
+}
+
+.orange {
+    background-color: #FBE6C7;
+}
