@@ -26,9 +26,13 @@ class PaymentStatusEmbeddedForm extends AbstractType
                 'choices' => [
                     'Booked CC 4086'  => 'Booked CC 4086',
                     'Booked CC 7501'  => 'Booked CC 7501',
+                    'Booked CC 4100'  => 'Booked CC 4100',
+                    'Booked CC 5584'  => 'Booked CC 5584',
                     'Booked PPCC'     => 'Booked PPCC',
                     'Charged CC 4086' => 'Charged CC 4086',
                     'Charged CC 7501' => 'Charged CC 7501',
+                    'Charged CC 4100' => 'Charged CC 4100',
+                    'Charged CC 5584' => 'Charged CC 5584',
                     'Charged PPCC'    => 'Charged PPCC',
                     'Completed'       => 'Completed',
                     'To be paid cash' => 'To be paid cash',
