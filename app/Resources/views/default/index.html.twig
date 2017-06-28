@@ -178,8 +178,13 @@
                 {% for item in itinerary if "now" | date('Y-m-d') > item.startsAt | date('Y-m-d') %}
                     {{ macros.itinerary(item) }}
                 {% endfor %}
+                <div class="card-block js-antshares-wrapper">
+                    {{ macros.antshares(antshares) }}
+                </div>
             </div>
         </div>
+
+
 
 
     </div>

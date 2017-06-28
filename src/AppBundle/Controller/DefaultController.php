@@ -39,7 +39,8 @@ class DefaultController extends Controller
                 'payment'=>         $this->createForm('AppBundle\Form\PaymentFormType')->createView()
             ],
             'fixer' =>              $fixer,
-            'variables' =>          $this->get('app.get_variables')
+            'variables' =>          $this->get('app.get_variables'),
+            'antshares' =>          $this->get('app.antshares_to_euros')->getPrice()
         ]);
     }
 }
