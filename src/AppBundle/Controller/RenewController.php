@@ -65,6 +65,11 @@ class RenewController extends Controller
                 return new Response($this->renderView('renew/budgetHistory.html.twig', [
                     'budgetHistory' => $em->getRepository('AppBundle:Budget')->findDesc(),
                 ]), 200);
+            case 'antshares':
+                return new Response($this->renderView('renew/antshares.html.twig', [
+                    'antshares' => $this->get('app.antshares_to_euros')->getPrice(),
+                ]), 200);
+
         }
     }
 }

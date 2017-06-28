@@ -81,6 +81,11 @@ var EuropeTravelsApp = {
             'click',
             this.handleBudgetSubtraction
         );
+
+        this.$wrapper.find('.js-antshares-wrapper').on(
+            'click',
+            RenewApp.antshares
+        )
     },
 
     handleConverterSubmit: function () {
@@ -492,6 +497,15 @@ var RenewApp = {
             success: function (response) {
                 EuropeTravelsApp.$wrapper.find('.js-document-list-wrapper').html(response);
                 variables.changes.documentList = false;
+            }
+        })
+    },
+
+    antshares: function () {
+        $.ajax({
+            url: "api/renew/antshares",
+            success: function (response) {
+                EuropeTravelsApp.$wrapper.find('.js-antshares-wrapper').html(response);
             }
         })
     }
