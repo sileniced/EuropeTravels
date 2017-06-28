@@ -25,6 +25,10 @@ services:
         class: AppBundle\Service\fixerExchangeRates
         arguments: ['@buzz']
 
+    app.antshares_to_euros:
+        class: AppBundle\Service\AntsharesToEuros
+        arguments: ['@buzz']
+
     app.get_budget:
         class: AppBundle\Service\generateBudget
         arguments: ['@doctrine.orm.entity_manager']
