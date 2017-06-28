@@ -23,18 +23,12 @@ class AntsharesToEuros
         $this->buzz = $buzz;
     }
 
-    public function getPrice(){
-
-        $market = [
-            'BTCANS' => json_decode($this->buzz->get('https://bittrex.com/api/v1.1/public/getticker?market=btc-ans')->getContent())->result->Last,
-            'USDBTC' => json_decode($this->buzz->get('https://bittrex.com/api/v1.1/public/getticker?market=usdt-btc')->getContent())->result->Last,
-            'USDEUR' => json_decode($this->buzz->get('http://api.fixer.io/latest?base=usd&symbols=EUR')->getContent())->rates->EUR
-        ];
-
-        $result['anc'] = 1001;
+    public function getPrice($antshares)
+    {
+        $result['anc'] = $antshares;
+        $market['BTCANS'] = json_decode($this->buzz->get('https://bittrex.com/api/v1.1/public/getticker?market=btc-ans')->getContent())->result->Last;
         $result['btc'] = $result['anc'] * $market['BTCANS'];
-        $result['usd'] = $result['btc'] * $market['USDBTC'];
-        $result['eur'] = $result['usd'] * $market['USDEUR'];
+        $result['eur'] = json_decode($this->buzz->get('https://bitonic.nl/api/sell?btc=' . $result['btc'])->getContent())->eur;
 
         return $result;
     }

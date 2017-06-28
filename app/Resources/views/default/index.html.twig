@@ -181,8 +181,7 @@
                 <div class="card-block">
                     {{ antshares.anc }} ANC<br/>
                     {{ antshares.btc }} BTC<br/>
-                    $ {{ antshares.usd | number_format(2, '.', ',') }}<br/>
-                    € {{ antshares.eur | number_format(2, '.', ',') }}<br/>
+                    € {{ antshares.eur | number_format(2, ',', '.') }}<br/>
                 </div>
             </div>
         </div>
