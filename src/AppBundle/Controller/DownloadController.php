@@ -43,8 +43,14 @@ class DownloadController extends Controller
 
         $found = false;
 
-        foreach ($entity->getDocuments() as $document) {
-            if ($document->getDocumentPath() == $_hash) {
+        if ($_entity != 'Document') {
+            foreach ($entity->getDocuments() as $document) {
+                if ($document->getDocumentPath() == $_hash) {
+                    $found = true;
+                }
+            }
+        } else {
+            if ($entity->getDocumentPath() == $_hash) {
                 $found = true;
             }
         }
