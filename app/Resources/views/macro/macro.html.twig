@@ -306,9 +306,28 @@
 {% endmacro %}
 
 {% macro antshares(antshares) %}
-    {{ antshares.anc }} ANC x {{ antshares.ANSBTC }} BTC =<br/>
-    {{ antshares.btc }} BTC x € {{ antshares.BTCEUR }} =<br/>
-    € {{ antshares.eur | number_format(2, ',', '.') }}
-    {% set diff = antshares.eur - 6304.16 %}
-    (€ {{ diff > 0 ? diff | number_format(2, ',', '.') ~ ' profit' : diff | number_format(2, ',', '.') ~ ' loss' }})<br/>
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>{{ antshares.eos }} EOS</td>
+            <td>x</td>
+            <td>{{ antshares.EOSBTC }} BTC</td>
+        </tr>
+        <tr>
+            <td>{{ antshares.anc }} ANC</td>
+            <td>x</td>
+            <td>{{ antshares.ANSBTC }} BTC</td>
+        </tr>
+        <tr>
+            <td>{{ antshares.btc }} BTC</td>
+            <td>x</td>
+            <td>€ {{ antshares.BTCEUR }}</td>
+        </tr>
+        <tr>
+            <td>result</td>
+            <td></td>
+            <td>€ {{ antshares.eur | number_format(2, ',', '.') }}</td>
+        </tr>
+        </tbody>
+    </table>
 {% endmacro %}

@@ -23,11 +23,17 @@ class AntsharesToEuros
         $this->buzz = $buzz;
     }
 
-    public function getPrice($antshares = 1001)
+    public function getPrice($antshares = 1001, $eos = 1005)
     {
+
+
+        $result['eos'] = $eos;
+        $result['EOSBTC'] = json_decode($this->buzz->get('https://api.kraken.com/0/public/Ticker?pair=eosxbt')->getContent())->result->EOSXBT->c[0];
+
         $result['anc'] = $antshares;
         $result['ANSBTC'] = json_decode($this->buzz->get('https://bittrex.com/api/v1.1/public/getticker?market=btc-ans')->getContent())->result->Last;
-        $result['btc'] = $result['anc'] * $result['ANSBTC'];
+
+        $result['btc'] = ($result['anc'] * $result['ANSBTC']) + ($result['eos'] * $result['EOSBTC']);
         $market['bitonic'] = json_decode($this->buzz->get('https://bitonic.nl/api/sell?btc=' . $result['btc'])->getContent());
         $result['eur'] = $market['bitonic']->eur;
         $result['BTCEUR'] = $market['bitonic']->price;
