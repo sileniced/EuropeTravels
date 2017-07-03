@@ -309,7 +309,7 @@
     <table class="table">
         <tbody>
         <tr>
-            <td>{{ antshares.anc }} ANC</td>
+            <td>{{ antshares.ans }} ANC</td>
             <td>x</td>
             <td>{{ antshares.ANSBTC }} BTC</td>
         </tr>
@@ -322,6 +322,12 @@
             <td>result</td>
             <td></td>
             <td>€ {{ antshares.eur | number_format(2, ',', '.') }}</td>
+        </tr>
+        <tr><th style="text-align: center" colspan="3">mining</th></tr>
+        <tr>
+            <td>day: € {{ antshares.eur_day | number_format(2, ',', '.') }}</td>
+            <td></td>
+            <td>month: € {{ antshares.eur_month | number_format(2, ',', '.') }}</td>
         </tr>
         </tbody>
     </table>
