@@ -40,7 +40,7 @@ class DefaultController extends Controller
             ],
             'fixer' =>              $fixer,
             'variables' =>          $this->get('app.get_variables'),
-            'antshares' =>          $this->get('app.antshares_to_euros')->getPrice()
+//            'antshares' =>          $this->get('app.antshares_to_euros')->getPrice()
         ]);
     }
 }

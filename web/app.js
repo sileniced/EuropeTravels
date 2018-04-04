@@ -502,10 +502,13 @@ var RenewApp = {
     },
 
     antshares: function () {
+        var self = $(this);
+        self.slideUp();
         $.ajax({
             url: "api/renew/antshares",
             success: function (response) {
                 EuropeTravelsApp.$wrapper.find('.js-antshares-wrapper').html(response);
+                self.slideDown();
             }
         })
     }
