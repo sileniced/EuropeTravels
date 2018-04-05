@@ -2,11 +2,12 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Destination;
 use AppBundle\Entity\Hotel;
 use AppBundle\Entity\Itinerary;
 use AppBundle\Entity\PaymentStatus;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,19 +18,11 @@ class HotelFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('city', ChoiceType::class, [
-                'choices' => [
-                    'Düsseldorf'    => 'Düsseldorf',
-                    'Venice'        => 'Venice',
-                    'Hilversum'     => 'Hilversum',
-                    'Phantasialand' => 'Phantasialand',
-                    'London'        => 'London',
-                    'Prague'        => 'Prague',
-                    'Brussels'      => 'Brussels',
-                    'Paris'         => 'Paris',
-                    'DisneyLand'    => 'DisneyLand',
-                    'other'         => 'other'
-                ]
+            ->add('destination', EntityType::class, [
+                'class' => Destination::class,
+                'multiple' => false,
+                'expanded' => false,
+                'choice_label' => 'name'
             ])
             ->add('name')
             ->add('link')

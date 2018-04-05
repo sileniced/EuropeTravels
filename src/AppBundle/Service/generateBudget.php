@@ -11,6 +11,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Budget;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
 
 class generateBudget
 {
@@ -42,10 +43,14 @@ class generateBudget
             $daysLeft = $_today->diff($budget->getEndDateAt());
             $budget->setAmountToday($budget->getAmount() / $daysLeft->days);
             $this->em->persist($budget);
-            $this->em->flush();
+            try {
+                $this->em->flush();
+            } catch (OptimisticLockException $e) {
+            }
 
         } else {
 
+            /** @var Budget $budget */
             $budget = $budget[0];
 
             $today = $_today->format('Y-m-d');

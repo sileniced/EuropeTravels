@@ -26,9 +26,9 @@ class Hotel
     private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Destination", inversedBy="hotel")
      */
-    private $city;
+    private $destination;
 
     /**
      * @ORM\Column(type="string")
@@ -203,17 +203,17 @@ class Hotel
     /**
      * @return mixed
      */
-    public function getCity()
+    public function getDestination()
     {
-        return $this->city;
+        return $this->destination;
     }
 
     /**
-     * @param mixed $city
+     * @param mixed $destination
      */
-    public function setCity($city)
+    public function setDestination($destination)
     {
-        $this->city = $city;
+        $this->destination = $destination;
     }
 
 }

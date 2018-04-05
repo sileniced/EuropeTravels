@@ -30,6 +30,15 @@ class Variables
     private $converterCurrency;
 
     /**
+     * Variables constructor.
+     * @param $converterCurrency
+     */
+    public function __construct($converterCurrency)
+    {
+        $this->converterCurrency = $converterCurrency;
+    }
+
+    /**
      * @return mixed
      */
     public function getId()

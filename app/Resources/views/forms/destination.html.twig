@@ -1,0 +1,7 @@
+{% import ':macro:macro.html.twig' as macros %}
+
+{% set objForm = forms.destination %}
+{{ form_start(objForm) }}
+{{ form_row(objForm.name) }}
+<input type="submit" value="submit">
+{{ form_end(objForm) }}

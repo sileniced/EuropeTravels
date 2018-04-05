@@ -9,11 +9,15 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Budget;
 use AppBundle\Entity\BudgetSubtraction;
+use AppBundle\Entity\Document;
 use AppBundle\Entity\Hash;
+use AppBundle\Entity\Variables;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -63,8 +67,11 @@ class ApiController extends Controller
         if ($form->isValid()) {
             $object = $form->getData();
 
-            foreach ($object->getDocuments() as $document) {
-                $document->setDocumentPath($this->documentUploader($document->getDocument()));
+            if (method_exists($object,'getDocuments')) {
+                /** @var Document $document */
+                foreach ($object->getDocuments() as $document) {
+                    $document->setDocumentPath($this->documentUploader($document->getDocument()));
+                }
             }
 
             $em->persist($object);
@@ -80,7 +87,7 @@ class ApiController extends Controller
      * @param $file
      * @return string
      */
-    private function documentUploader($file)
+    private function documentUploader(UploadedFile $file)
     {
         $hashGenerator = $this->get('app.hash_generator');
         $hash = $hashGenerator->generate();
@@ -111,6 +118,7 @@ class ApiController extends Controller
         $em = $this->getDoctrine()->getManager();
         $amount = $bag->get('amount');
 
+        /** @var Budget $budget */
         $budget = $em->getRepository('AppBundle:Budget')->findLastRow()[0];
         $budget->setAmount($budget->getAmount() - $amount);
         $budget->setAmountToday($budget->getAmountToday() - $amount);
@@ -154,6 +162,7 @@ class ApiController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var Variables $variables */
         $variables = $em->getRepository('AppBundle:Variables')->findLastRow()[0];
         $variables->setConverterCurrency($currency);
 

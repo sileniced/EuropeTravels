@@ -26,9 +26,9 @@ class Attraction
     private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Destination", inversedBy="attraction")
      */
-    private $city;
+    private $destination;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -65,15 +65,143 @@ class Attraction
      */
     private $documents;
 
+    /**
+     * Attraction constructor.
+     */
     public function __construct()
     {
         $this->documents = new ArrayCollection();
     }
 
-    public function addDocument(Document $document)
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink(): string
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param string $link
+     */
+    public function setLink(string $link)
+    {
+        $this->link = $link;
+    }
+
+    /**
+     * @return Itinerary
+     */
+    public function getItinerary(): Itinerary
+    {
+        return $this->itinerary;
+    }
+
+    /**
+     * @param Itinerary $itinerary
+     */
+    public function setItinerary(Itinerary $itinerary): void
+    {
+        $itinerary->setEntity('Attraction');
+        $this->itinerary = $itinerary;
+    }
+
+    /**
+     * @return PaymentStatus
+     */
+    public function getPaymentStatus(): PaymentStatus
+    {
+        return $this->paymentStatus;
+    }
+
+    /**
+     * @param PaymentStatus $paymentStatus
+     */
+    public function setPaymentStatus(PaymentStatus $paymentStatus): void
+    {
+        $paymentStatus->setEntity('Attraction');
+        $this->paymentStatus = $paymentStatus;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param string $address
+     */
+    public function setAddress(string $address): void
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return Destination
+     */
+    public function getDestination(): Destination
+    {
+        return $this->destination;
+    }
+
+    /**
+     * @param Destination $destination
+     */
+    public function setDestination(Destination $destination)
+    {
+        $this->destination = $destination;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
+    }
+
+    /**
+     * @param Document $document
+     */
+    public function addDocument(Document $document): void
     {
         if($this->documents->contains($document)) {
-            return null;
+            return;
         }
 
         $this->documents[] = $document;
@@ -82,138 +210,17 @@ class Attraction
         $document->setAttraction($this);
     }
 
-    public function removeDocument(Document $document)
+    /**
+     * @param Document $document
+     */
+    public function removeDocument(Document $document): void
     {
-        if (!$this->documents->contains($document)) {
-            return null;
-        }
+        if (!$this->documents->contains($document)) return;
 
         if (unlink($document->getDocumentPath())) {
             $this->documents->removeElement($document);
             $document->setAttraction(null);
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param mixed $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLink()
-    {
-        return $this->link;
-    }
-
-    /**
-     * @param mixed $link
-     */
-    public function setLink($link)
-    {
-        $this->link = $link;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getItinerary()
-    {
-        return $this->itinerary;
-    }
-
-    /**
-     * @param mixed $itinerary
-     */
-    public function setItinerary(Itinerary $itinerary)
-    {
-        $itinerary->setEntity('Attraction');
-        $this->itinerary = $itinerary;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPaymentStatus()
-    {
-        return $this->paymentStatus;
-    }
-
-    /**
-     * @param mixed $paymentStatus
-     */
-    public function setPaymentStatus(PaymentStatus $paymentStatus)
-    {
-        $paymentStatus->setEntity('Attraction');
-        $this->paymentStatus = $paymentStatus;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param mixed $address
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param mixed $city
-     */
-    public function setCity($city)
-    {
-        $this->city = $city;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
     }
 
 }

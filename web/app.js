@@ -82,10 +82,10 @@ var EuropeTravelsApp = {
             this.handleBudgetSubtraction
         );
 
-        this.$wrapper.find('.js-antshares-wrapper').on(
-            'click',
-            RenewApp.antshares
-        )
+        // this.$wrapper.find('.js-antshares-wrapper').on(
+        //     'click',
+        //     RenewApp.antshares
+        // )
     },
 
     handleConverterSubmit: function () {
@@ -349,6 +349,9 @@ var EuropeTravelsApp = {
 var RenewApp = {
     switcher: function(object) {
         switch (object) {
+            case 'destination':
+
+                break;
             case 'transport':
             case 'hotel':
             case 'attraction':
@@ -499,19 +502,19 @@ var RenewApp = {
                 variables.changes.documentList = false;
             }
         })
-    },
-
-    antshares: function () {
-        var self = $(this);
-        self.slideUp();
-        $.ajax({
-            url: "api/renew/antshares",
-            success: function (response) {
-                EuropeTravelsApp.$wrapper.find('.js-antshares-wrapper').html(response);
-                self.slideDown();
-            }
-        })
     }
+
+    // antshares: function () {
+    //     var self = $(this);
+    //     self.slideUp();
+    //     $.ajax({
+    //         url: "api/renew/antshares",
+    //         success: function (response) {
+    //             EuropeTravelsApp.$wrapper.find('.js-antshares-wrapper').html(response);
+    //             self.slideDown();
+    //         }
+    //     })
+    // }
 };
 
 $(document).ready(function() {

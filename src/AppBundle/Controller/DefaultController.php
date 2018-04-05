@@ -19,6 +19,7 @@ class DefaultController extends Controller
 
         return $this->render('default/index.html.twig', [
             'collection' => [
+                'destinations' =>   $em->getRepository('AppBundle:Destination')->findAll(),
                 'transports' =>     $em->getRepository('AppBundle:Transport')->findAllOrderedByStartsAt(),
                 'hotels' =>         $em->getRepository('AppBundle:Hotel')->findAllOrderedByStartsAt(),
                 'attractions' =>    $em->getRepository('AppBundle:Attraction')->findAllOrderedByStartsAt(),
@@ -34,6 +35,7 @@ class DefaultController extends Controller
             'forms' => [
                 'document' =>       $this->createForm('AppBundle\Form\DocumentEmbeddedForm')->createView(),
                 'transport' =>      $this->createForm('AppBundle\Form\TransportFormType')->createView(),
+                'destination' =>    $this->createForm('AppBundle\Form\DestinationFormType')->createView(),
                 'hotel' =>          $this->createForm('AppBundle\Form\HotelFormType')->createView(),
                 'attraction'=>      $this->createForm('AppBundle\Form\AttractionFormType')->createView(),
                 'payment'=>         $this->createForm('AppBundle\Form\PaymentFormType')->createView()

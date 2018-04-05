@@ -30,8 +30,7 @@ class getVariables
         $variables = $this->em->getRepository('AppBundle:Variables')->findLastRow();
 
         if (null == $variables) {
-            $variables = new Variables();
-            $variables->setConverterCurrency('EUR');
+            $variables = new Variables('EUR');
 
             $this->em->persist($variables);
             $this->em->flush();

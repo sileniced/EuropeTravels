@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Document;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -44,6 +45,7 @@ class DownloadController extends Controller
         $found = false;
 
         if ($_entity != 'Document') {
+            /** @var Document $document */
             foreach ($entity->getDocuments() as $document) {
                 if ($document->getDocumentPath() == $_hash) {
                     $found = true;

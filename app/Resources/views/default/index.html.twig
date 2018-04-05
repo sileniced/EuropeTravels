@@ -109,6 +109,24 @@
 
 
                 <div class="js-menu-item-wrapper">
+                    <h2 class="display-4 js-menu-item">destination</h2>
+                    <div style="display:none;">
+                        <p class="col-1 lead js-form-menu-item">add</p>
+                        <div class="js-item card-block">
+                            <div data-url="{{ path('new', {'_object': 'Destination'}) }}" class="js-form-item" style="display:none;">
+                                {% include ':forms:destination.html.twig' %}
+                            </div>
+                            <div class="js-transport-wrapper">
+                                {% for destination in collection.destinations %}
+                                    {{ macros.destination(destination, 'Collection') }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="js-menu-item-wrapper">
                     <h2 class="display-4 js-menu-item">transport</h2>
                     <div style="display:none;">
                         <p class="col-1 lead js-form-menu-item">add</p>

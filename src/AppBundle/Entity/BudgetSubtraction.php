@@ -25,7 +25,7 @@ class BudgetSubtraction
     private $id;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="integer")
      */
     private $amount;
 
@@ -55,23 +55,15 @@ class BudgetSubtraction
     /**
      * @return mixed
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @return mixed
      */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }

@@ -1,0 +1,5 @@
+{% import ':macro:macro.html.twig' as macros %}
+
+{% for destination in destinations %}
+    {{ macros.destination(destination, 'Collection') }}
+{% endfor %}

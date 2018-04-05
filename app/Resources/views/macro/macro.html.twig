@@ -1,3 +1,17 @@
+{% macro destination(destination, parent) %}{% import _self as macros %}
+    <div class="js-item-card-title">
+        <h4>{{ destination.name }}</h4>
+    </div>
+    <div class="card card-block js-item-card" style="display:none;">
+        {#<h6 style="text-align: center;">{{ transport.meansOfTransport | capitalize }}</h6>#}
+        {#<h6 style="text-align: center;"><a target="_blank" href="https://maps.google.com/?q={{ transport.address }}">{{ transport.address }}</a></h6>#}
+        {#{{ macros.itineraryPiece(transport.itinerary) }}#}
+        {#{{ macros.paymentStatus(transport.paymentStatus, parent) }}<br>#}
+        {#{{ macros.objectDocuments(transport, 'Transport') }}#}
+    </div>
+    <hr>
+{% endmacro %}
+
 {% macro transport(transport, parent) %}{% import _self as macros %}
     <div class="js-item-card-title">
         <h4>{{ transport.description }}</h4>

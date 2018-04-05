@@ -11,7 +11,6 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use function Symfony\Component\Debug\Tests\testHeader;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BudgetRepository")
@@ -37,14 +36,12 @@ class Budget
     private $createdAt;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="integer")
      */
     private $amount;
 
-    private $spent;
-
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="integer")
      */
     private $amountToday;
 
@@ -55,20 +52,20 @@ class Budget
 
     /**
      * Budget constructor.
-     * @param array $budgetSubtraction
      */
-    public function __construct(array $budgetSubtraction)
+    public function __construct( /** array $budgetSubtraction */ )
     {
         $this->budgetSubtraction = new ArrayCollection();
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getSpent()
+    public function getSpent(): int
     {
         $spent = 0;
 
+        /** @var BudgetSubtraction $subtraction */
         foreach ($this->getBudgetSubtraction() as $subtraction) {
             $spent += $subtraction->getAmount();
         }
@@ -79,41 +76,9 @@ class Budget
     /**
      * @return mixed
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEndDateAt()
-    {
-        return $this->endDateAt;
-    }
-
-    /**
-     * @param $endDateAt
-     */
-    public function setEndDateAt($endDateAt)
-    {
-        $this->endDateAt = $endDateAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
-
-    /**
-     * @param mixed $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
     }
 
     /**
@@ -135,21 +100,53 @@ class Budget
     /**
      * @return mixed
      */
-    public function getAmountToday()
+    public function getEndDateAt()
+    {
+        return $this->endDateAt;
+    }
+
+    /**
+     * @param $endDateAt
+     */
+    public function setEndDateAt($endDateAt)
+    {
+        $this->endDateAt = $endDateAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param int $amount
+     */
+    public function setAmount(int $amount)
+    {
+        $this->amount = $amount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAmountToday(): int
     {
         return $this->amountToday;
     }
 
     /**
-     * @param mixed $amountToday
+     * @param int $amountToday
      */
-    public function setAmountToday($amountToday)
+    public function setAmountToday(int $amountToday)
     {
         $this->amountToday = $amountToday;
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
     public function getBudgetSubtraction()
     {
@@ -157,7 +154,7 @@ class Budget
     }
 
     /**
-     * @param mixed $budgetSubtraction
+     * @param BudgetSubtraction $budgetSubtraction
      */
     public function setBudgetSubtraction(BudgetSubtraction $budgetSubtraction)
     {
