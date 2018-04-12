@@ -76,7 +76,7 @@ class Attraction
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -92,7 +92,7 @@ class Attraction
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         return $this->description;
     }
@@ -108,7 +108,7 @@ class Attraction
     /**
      * @return string
      */
-    public function getLink(): string
+    public function getLink()
     {
         return $this->link;
     }
@@ -124,7 +124,7 @@ class Attraction
     /**
      * @return Itinerary
      */
-    public function getItinerary(): Itinerary
+    public function getItinerary()
     {
         return $this->itinerary;
     }
@@ -141,7 +141,7 @@ class Attraction
     /**
      * @return PaymentStatus
      */
-    public function getPaymentStatus(): PaymentStatus
+    public function getPaymentStatus()
     {
         return $this->paymentStatus;
     }
@@ -158,7 +158,7 @@ class Attraction
     /**
      * @return string
      */
-    public function getAddress(): string
+    public function getAddress()
     {
         return $this->address;
     }
@@ -174,7 +174,7 @@ class Attraction
     /**
      * @return Destination
      */
-    public function getDestination(): Destination
+    public function getDestination()
     {
         return $this->destination;
     }
