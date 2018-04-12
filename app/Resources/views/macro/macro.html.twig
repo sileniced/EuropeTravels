@@ -29,7 +29,7 @@
 
 {% macro hotel(hotel, parent) %}{% import _self as macros %}
     <div class="js-item-card-title">
-        <h4>{{ hotel.city }}</h4>
+        <h4>{{ hotel.destination.name }}</h4>
         <h5>{{ hotel.name }}</h5>
     </div>
     <div class="card card-block js-item-card" style="display:none;">
@@ -44,7 +44,7 @@
 
 {% macro attraction(attraction, parent) %}{% import _self as macros %}
     <div class="js-item-card-title">
-        <h4>{{ attraction.city }}</h4>
+        <h4>{{ attraction.destination.name }}</h4>
         <h5>{{ attraction.description }}</h5>
     </div>
     <div class="card card-block js-item-card" style="display:none;">
